@@ -108,9 +108,9 @@ export default function SVGIndonesiaMap({
   ];
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col justify-between h-full">
+    <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col justify-between h-full space-y-4">
       {/* Title */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between">
         <div>
           <h3 className="text-xs font-black text-slate-700 uppercase tracking-widest leading-none mb-1">
             PETA SEBARAN INDEKS DESA
@@ -119,22 +119,22 @@ export default function SVGIndonesiaMap({
             Klik region pulau untuk menyaring filter data
           </p>
         </div>
-        <div className="bg-blue-50 text-blue-600 p-1.5 rounded-lg">
+        <div className="bg-blue-50 text-blue-600 p-1.5 rounded-lg shrink-0">
           <Info className="w-4 h-4" />
         </div>
       </div>
 
-      {/* Main Grid: Interactive Map + Top Province List */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
-        {/* Left Col: SVG Map Container */}
-        <div className="lg:col-span-8 relative bg-slate-50 border border-slate-100/50 rounded-xl p-4 flex flex-col justify-center min-h-[260px]">
+      {/* Main Flex Wrapper: Map + Top Province List with robust flex-wrap */}
+      <div className="flex flex-wrap lg:flex-nowrap gap-5 items-stretch w-full">
+        {/* Left Col: SVG Map Container - Flexible and robust */}
+        <div className="flex-[3] min-w-[280px] xs:min-w-[320px] relative bg-slate-50 border border-slate-150 rounded-xl p-4 flex flex-col justify-between min-h-[250px]">
           <div
-            className="w-full h-full relative cursor-crosshair"
+            className="w-full h-full relative cursor-crosshair flex items-center justify-center"
             onMouseMove={handleMouseMove}
           >
             <svg
               viewBox="0 0 360 140"
-              className="w-full h-auto drop-shadow-sm select-none"
+              className="w-full h-auto drop-shadow-xs select-none max-w-[340px]"
               xmlns="http://www.w3.org/2000/svg"
             >
               {/* Sea Background subtle grid lines */}
@@ -150,8 +150,8 @@ export default function SVGIndonesiaMap({
                 const isActive = island.provinces.includes(selectedProvince);
                 const isHovered = hoveredIsland?.id === island.id;
                 
-                // Color scaling based on Average ID (higher is deeper green-blue, lower is light emerald)
-                let fillCol = "#10b981"; // default emerald-500
+                // Color scaling based on Average ID
+                let fillCol = "#10b981";
                 if (island.averageID >= 0.72) fillCol = "#0c4a9f"; // Navy
                 else if (island.averageID >= 0.68) fillCol = "#0284c7"; // Skies
                 else if (island.averageID >= 0.64) fillCol = "#0d9488"; // Teal
@@ -176,9 +176,9 @@ export default function SVGIndonesiaMap({
                     onMouseLeave={() => setHoveredIsland(null)}
                     onClick={() => {
                       if (island.provinces.length > 0) {
-                        onSelectProvince(island.provinces[0]); // Select first province of the island group
+                        onSelectProvince(island.provinces[0]);
                       } else {
-                        onSelectProvince("ALL"); // fallback
+                        onSelectProvince("ALL");
                       }
                     }}
                   />
@@ -187,7 +187,6 @@ export default function SVGIndonesiaMap({
 
               {/* Interactive labels for islands */}
               {islands.map((island) => {
-                // Approximate island center coordinates
                 let coords = { x: 0, y: 0 };
                 if (island.id === "sumatera") coords = { x: 45, y: 55 };
                 else if (island.id === "jawa") coords = { x: 145, y: 121 };
@@ -196,16 +195,14 @@ export default function SVGIndonesiaMap({
                 else if (island.id === "nusatenggara") coords = { x: 242, y: 121 };
                 else if (island.id === "papua") coords = { x: 310, y: 70 };
 
-                const isHovered = hoveredIsland?.id === island.id;
-
                 return (
                   <g key={`lbl-${island.id}`} className="pointer-events-none">
                     <text
                       x={coords.x}
                       y={coords.y}
                       textAnchor="middle"
-                      className="fill-slate-700/80 font-semibold select-none transition-all"
-                      style={{ fontSize: "6px", fontFamily: "monospace" }}
+                      className="fill-slate-700/80 font-bold select-none transition-all"
+                      style={{ fontSize: "6.5px", fontFamily: "monospace", letterSpacing: "0.02em" }}
                     >
                       {island.name.split(" ")[0]}
                     </text>
@@ -217,22 +214,22 @@ export default function SVGIndonesiaMap({
             {/* Hover Tooltip Box */}
             {hoveredIsland && (
               <div
-                className="absolute z-30 bg-slate-900/95 text-white text-xs p-3.5 rounded-xl shadow-lg pointer-events-none border border-slate-800 backdrop-blur-md max-w-xs transition-opacity duration-150"
+                className="absolute z-30 bg-slate-900/95 text-white text-xs p-3 rounded-xl shadow-lg pointer-events-none border border-slate-800 backdrop-blur-md max-w-xs transition-opacity duration-150"
                 style={{
                   left: `${tooltipPos.x}px`,
                   top: `${tooltipPos.y}px`,
                 }}
               >
-                <p className="font-extrabold text-amber-300 text-[13px] border-b border-slate-800 pb-1.5 mb-1.5 flex items-center gap-1.5">
+                <p className="font-extrabold text-amber-300 text-[12px] border-b border-slate-800 pb-1 mb-1 flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5" />
                   {hoveredIsland.name}
                 </p>
-                <div className="space-y-1.5 font-medium text-slate-300">
-                  <div className="flex justify-between gap-5 text-[11px]">
+                <div className="space-y-1 font-medium text-slate-300 text-[10.5px]">
+                  <div className="flex justify-between gap-4">
                     <span>Rata-rata Indeks Desa:</span>
                     <span className="font-bold text-white font-mono">{formatIndoDecimal(hoveredIsland.averageID)}</span>
                   </div>
-                  <div className="flex justify-between gap-5 text-[11px]">
+                  <div className="flex justify-between gap-4">
                     <span>Terdaftar BUM Desa:</span>
                     <span className="font-bold text-white font-mono">{formatIndoNumber(hoveredIsland.bumdesCount)} unit</span>
                   </div>
@@ -242,34 +239,34 @@ export default function SVGIndonesiaMap({
           </div>
 
           {/* Color Scale Legend */}
-          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+          <div className="mt-3 pt-2.5 border-t border-slate-200/60 flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2.5 text-slate-500">
             <div className="flex flex-col gap-0.5">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
-                Indeks Desa (ID {tahun}) Scale
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">
+                INDEKS DESA (ID {tahun})
               </span>
-              <div className="flex items-center gap-1 mt-1.5">
-                <span className="text-[10px] font-mono text-slate-400">0,000</span>
-                <div className="h-2.5 w-24 rounded-full bg-gradient-to-r from-teal-400 via-sky-500 to-blue-600" />
-                <span className="text-[10px] font-mono text-slate-400">1,000</span>
+              <div className="flex items-center gap-1.5 mt-1">
+                <span className="text-[9px] font-bold font-mono text-slate-400">0,000</span>
+                <div className="h-2 w-24 rounded-full bg-gradient-to-r from-[#14b8a6] via-[#0284c7] to-[#0c4a9f]" />
+                <span className="text-[9px] font-bold font-mono text-slate-400">1,000</span>
               </div>
             </div>
             
-            <div className="text-right">
-              <span className="text-[9px] font-bold text-slate-400 uppercase block leading-none">
-                Skala Regional
+            <div className="text-left xs:text-right">
+              <span className="text-[9px] font-black text-slate-400 uppercase block leading-none">
+                SKALA WARNA REGIONAL
               </span>
-              <span className="text-[11px] font-semibold text-slate-600 block mt-1">
-                Green-to-Navy (Rendah ke Tinggi)
+              <span className="text-[10px] font-bold text-slate-500 block mt-1">
+                Turquoise ke Navy (Rendah &rsaquo; Tinggi)
               </span>
             </div>
           </div>
         </div>
 
-        {/* Right Col: Top 5 Provinces scoreboard */}
-        <div className="lg:col-span-4 self-stretch flex flex-col justify-between">
-          <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 flex-1 flex flex-col justify-between">
+        {/* Right Col: Top 5 Provinces scoreboard with absolute zero squeeze risk */}
+        <div className="flex-[2] min-w-[220px] self-stretch flex flex-col justify-between">
+          <div className="bg-slate-50 rounded-xl p-4 border border-slate-150 flex-1 flex flex-col justify-between gap-4">
             <div>
-              <span className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block mb-3">
+              <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider block mb-2.5">
                 Rata-rata ID per Provinsi (Top 5)
               </span>
               <div className="space-y-2">
@@ -279,23 +276,23 @@ export default function SVGIndonesiaMap({
                     <div
                       key={prov.id}
                       onClick={() => onSelectProvince(prov.id)}
-                      className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all ${
+                      className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all min-w-0 gap-2 border ${
                         isSelected
-                          ? "bg-blue-600 text-white shadow-xs"
-                          : "bg-white hover:bg-slate-100 text-slate-700 border border-slate-100"
+                          ? "bg-blue-600 text-white shadow-xs border-blue-600"
+                          : "bg-white hover:bg-slate-100 text-slate-700 border-slate-150"
                       }`}
                     >
-                      <div className="flex items-center gap-2">
-                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className={`w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-bold ${
                           isSelected ? "bg-white/20 text-white" : "bg-blue-50 text-blue-700"
                         }`}>
                           {index + 1}
                         </span>
-                        <span className="text-[12px] font-bold truncate max-w-[120px]">
+                        <span className="text-[12px] font-bold truncate">
                           {prov.name}
                         </span>
                       </div>
-                      <span className="text-[12px] font-bold font-mono">
+                      <span className="text-[12px] font-bold font-mono shrink-0 pl-1">
                         {formatIndoDecimal(prov.idValue)}
                       </span>
                     </div>
@@ -305,15 +302,15 @@ export default function SVGIndonesiaMap({
             </div>
 
             {/* National Target Card inside */}
-            <div className="mt-5 pt-3.5 border-t border-slate-200/60 text-center">
-              <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1">
+            <div className="pt-3 border-t border-slate-200 text-center">
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">
                 Rata-rata Nasional
               </span>
-              <span className="text-xl font-extrabold text-blue-700 font-mono">
+              <span className="text-xl font-bold text-blue-700 font-mono">
                 0,678
               </span>
-              <span className="text-[10px] text-slate-400 font-semibold block mt-1">
-                Kategori ID: Berkembang (Menuju Maju)
+              <span className="text-[10px] text-slate-400 font-bold block mt-1 leading-none">
+                Kategori ID: Berkembang
               </span>
             </div>
           </div>
