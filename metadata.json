@@ -1,0 +1,6 @@
+{
+  "name": "Dashboard Data Desa & BUM Desa",
+  "description": "Dashboard interaktif data indeks desa dan pemeringkatan BUM Desa di Indonesia",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
