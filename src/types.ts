@@ -42,6 +42,7 @@ export interface ProvinceData {
       asetModal: number;
       administrasi: number;
       manfaat: number;
+      nilaiPemeringkatan?: number;
     };
   };
   
@@ -69,7 +70,14 @@ export interface ProvinceData {
     aktif: number;
     tidakAktif: number;
     pemeringkatanNilai: number;
-    pemeringkatanKategori: "Baik" | "Sangat Baik" | "Cukup" | "Kurang";
+    pemeringkatanKategori: string;
+    kelembagaan?: number;
+    manajemen?: number;
+    usaha?: number;
+    kemitraan?: number;
+    asetModal?: number;
+    administrasi?: number;
+    manfaat?: number;
   };
 }
 

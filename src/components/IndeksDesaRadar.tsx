@@ -1,7 +1,7 @@
 import React from "react";
 import { Award, ShieldAlert, Sparkles } from "lucide-react";
 import { ProvinceData } from "../types";
-import { formatIndoDecimal } from "./KPICards";
+import { formatIndoDecimal, formatIndoPrecise } from "./KPICards";
 
 interface IndeksDesaRadarProps {
   data: ProvinceData;
@@ -28,19 +28,20 @@ export default function IndeksDesaRadar({ data, tahun }: IndeksDesaRadarProps) {
     { key: "tataKelola", label: "Tata Kelola", val: dims.tataKelola, color: "bg-orange-500" },
   ];
 
+  const averagePoint = data.indeksDesa[tahun] || 70.60907572;
   const skorTotal = Number((dims.layananDasar + dims.sosial + dims.ekonomi + dims.lingkungan + dims.aksesibilitas + dims.tataKelola).toFixed(3));
-  const rataRata = Number((skorTotal / 6).toFixed(3));
 
-  // Determine Kategori Kinerja
+  // Determine Kategori Kinerja based on SKOR INDEKS DESA
+  const rawIdxVal = averagePoint > 10.0 ? averagePoint / 100 : averagePoint;
   let kategori = "Berkembang";
   let kategoriColor = "text-amber-500 bg-amber-50 border-amber-100";
-  if (rataRata >= 0.75) {
+  if (rawIdxVal >= 0.75) {
     kategori = "Mandiri";
     kategoriColor = "text-emerald-600 bg-emerald-50 border-emerald-100";
-  } else if (rataRata >= 0.70) {
+  } else if (rawIdxVal >= 0.70) {
     kategori = "Maju";
     kategoriColor = "text-blue-600 bg-blue-50 border-blue-100";
-  } else if (rataRata < 0.50) {
+  } else if (rawIdxVal < 0.50) {
     kategori = "Tertinggal";
     kategoriColor = "text-rose-600 bg-rose-50 border-rose-100";
   }
@@ -211,10 +212,10 @@ export default function IndeksDesaRadar({ data, tahun }: IndeksDesaRadarProps) {
           {/* Large Overall ID Score Panel */}
           <div className="bg-slate-50 border border-slate-150 rounded-xl p-3 text-center mt-2">
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block leading-none mb-1">
-              INDEKS DESA (ID {tahun})
+              RATA-RATA INDEKS DESA (SKOR INDEKS DESA)
             </span>
             <span className="text-2xl font-black text-blue-700 font-mono leading-none">
-              {formatIndoDecimal(rataRata)}
+              {formatIndoPrecise(averagePoint)}
             </span>
             <div className="block mt-1.5">
               <span className={`py-0.5 px-2.5 rounded-full border text-[9px] font-bold inline-block ${kategoriColor}`}>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Menu,
   Download,
@@ -13,7 +13,8 @@ import {
   Building,
   DollarSign,
   TrendingUp,
-  FileText
+  FileText,
+  RefreshCw
 } from "lucide-react";
 import Sidebar from "./components/Sidebar";
 import KPICards, { formatIndoDecimal, formatIndoNumber } from "./components/KPICards";
@@ -33,6 +34,8 @@ import {
   getDesaList
 } from "./data/mockData";
 import { DashboardFilters } from "./types";
+import { fetchAndParseGoogleSheet, getFilteredSheetsData, AggregatedDashboardData } from "./data/sheetsDataEngine";
+import SheetsSyncPanel from "./components/SheetsSyncPanel";
 
 export default function App() {
   const [filters, setFilters] = useState<DashboardFilters>({
@@ -46,7 +49,92 @@ export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
 
-  const activeData = getFilteredData(filters);
+  // Google Sheets state management
+  const [useGoogleSheets, setUseGoogleSheets] = useState(false);
+  const [spreadsheetUrl, setSpreadsheetUrl] = useState("https://docs.google.com/spreadsheets/d/16uQIT5riOor66rsf01sosstgCjTtOg28-zRAf7TVeQo/edit?usp=sharing");
+  const [sheetsData, setSheetsData] = useState<AggregatedDashboardData | null>(null);
+  const [isSheetsLoading, setIsSheetsLoading] = useState(false);
+  const [sheetsError, setSheetsError] = useState<string | null>(null);
+  const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
+
+  // Auto-sync function
+  const triggerSync = async (urlToSync = spreadsheetUrl) => {
+    setIsSheetsLoading(true);
+    setSheetsError(null);
+    try {
+      const parsed = await fetchAndParseGoogleSheet(urlToSync);
+      setSheetsData(parsed);
+      setUseGoogleSheets(true); // Automatically switch on success
+      setLastRefreshed(new Date());
+    } catch (e: any) {
+      console.error(e);
+      setSheetsError(e.message || "Gagal menyinkronkan data Google Spreadsheet.");
+    } finally {
+      setIsSheetsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    triggerSync();
+  }, []);
+
+  // Resolve dynamic administrative lists from sheets rows
+  const getDynamicKabupatenList = () => {
+    if (useGoogleSheets && sheetsData && filters.provinsi !== "ALL") {
+      const pIdMapping = {
+        "11": "ACEH", "12": "SUMATERA UTARA", "13": "SUMATERA BARAT", "14": "RIAU", "15": "JAMBI",
+        "16": "SUMATERA SELATAN", "17": "BENGKULU", "18": "LAMPUNG", "19": "KEPULAUAN BANGKA BELITUNG", "21": "KEPULAUAN RIAU",
+        "31": "DKI JAKARTA", "32": "JAWA BARAT", "33": "JAWA TENGAH", "34": "DI YOGYAKARTA", "35": "JAWA TIMUR",
+        "36": "BANTEN", "51": "BALI", "52": "NUSA TENGGARA BARAT", "53": "NUSA TENGGARA TIMUR", "61": "KALIMANTAN BARAT",
+        "62": "KALIMANTAN TENGAH", "63": "KALIMANTAN SELATAN", "64": "KALIMANTAN TIMUR", "65": "KALIMANTAN UTARA", "71": "SULAWESI UTARA",
+        "72": "SULAWESI TENGAH", "73": "SULAWESI SELATAN", "74": "SULAWESI TENGGARA", "75": "GORONTALO", "76": "SULAWESI BARAT",
+        "81": "MALUKU", "82": "MALUKU UTARA", "91": "PAPUA BARAT", "92": "PAPUA", "93": "PAPUA SELATAN",
+        "94": "PAPUA TENGAH", "95": "PAPUA PEGUNUNGAN", "96": "PAPUA BARAT DAYA"
+      };
+      const provNameRequired = pIdMapping[filters.provinsi as keyof typeof pIdMapping];
+      if (provNameRequired) {
+        const kabs = sheetsData.rawRows
+          .filter(r => r.provinsi === provNameRequired && r.kabupaten)
+          .map(r => r.kabupaten);
+        return Array.from(new Set(kabs)).sort();
+      }
+    }
+    return getKabupatenList(filters.provinsi);
+  };
+
+  const getDynamicKecamatanList = () => {
+    if (useGoogleSheets && sheetsData && filters.provinsi !== "ALL" && filters.kabupaten !== "ALL") {
+      const kecs = sheetsData.rawRows
+        .filter(r => r.kabupaten === filters.kabupaten && r.kecamatan)
+        .map(r => r.kecamatan);
+      return Array.from(new Set(kecs)).sort();
+    }
+    return getKecamatanList(filters.provinsi, filters.kabupaten);
+  };
+
+  const getDynamicDesaList = () => {
+    if (useGoogleSheets && sheetsData && filters.provinsi !== "ALL" && filters.kabupaten !== "ALL" && filters.kecamatan !== "ALL") {
+      const desas = sheetsData.rawRows
+        .filter(r => r.kecamatan === filters.kecamatan && r.desa)
+        .map(r => r.desa);
+      return Array.from(new Set(desas)).sort();
+    }
+    return getDesaList(filters.provinsi, filters.kabupaten, filters.kecamatan);
+  };
+
+  // Determine active data structure
+  let activeData = getFilteredData(filters);
+  if (useGoogleSheets && sheetsData) {
+    if (filters.provinsi === "ALL") {
+      activeData = sheetsData.national;
+    } else {
+      const foundProv = sheetsData.provinces.find(p => p.id === filters.provinsi);
+      if (foundProv) {
+        activeData = getFilteredSheetsData(foundProv, filters, sheetsData.rawRows);
+      }
+    }
+  }
+
   const isAllProvinces = filters.provinsi === "ALL";
 
   // Available Years
@@ -74,7 +162,7 @@ export default function App() {
       `Jumlah Kabupaten;${activeData.kabupatenCount}\n` +
       `Jumlah Kecamatan;${activeData.kecamatanCount}\n` +
       `Jumlah Desa/Kelurahan;${activeData.desaCount}\n` +
-      `Rata-rata Indeks Desa (ID);${activeData.indeksDesa[filters.tahun] || 0.678}\n` +
+      `Rata-rata Indeks Desa (ID);${activeData.indeksDesa[filters.tahun] || 0.7060907572}\n` +
       `===================================================\n` +
       `B. PARAMETER BUM DESA\n` +
       `Total Populasi BUM Desa;${activeData.bumDesaCount}\n` +
@@ -108,7 +196,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex text-slate-800 bg-slate-50/50 antialiased">
+    <div className="min-h-screen flex text-slate-800 bg-white antialiased">
       {/* Sidebar navigation */}
       <Sidebar
         activeTab={activeTab}
@@ -200,7 +288,7 @@ export default function App() {
                 className="bg-transparent font-extrabold focus:outline-hidden text-slate-700 cursor-pointer max-w-[150px] md:max-w-xs pl-1 enabled:hover:text-blue-600"
               >
                 <option value="ALL">Semua Kabupaten/Kota</option>
-                {getKabupatenList(filters.provinsi).map((kab) => (
+                {getDynamicKabupatenList().map((kab) => (
                   <option key={kab} value={kab}>
                     {kab}
                   </option>
@@ -223,7 +311,7 @@ export default function App() {
                 className="bg-transparent font-extrabold focus:outline-hidden text-slate-700 cursor-pointer max-w-[150px] md:max-w-xs pl-1 enabled:hover:text-blue-600"
               >
                 <option value="ALL">Semua Kecamatan</option>
-                {getKecamatanList(filters.provinsi, filters.kabupaten).map((kec) => (
+                {getDynamicKecamatanList().map((kec) => (
                   <option key={kec} value={kec}>
                     {kec}
                   </option>
@@ -245,7 +333,7 @@ export default function App() {
                 className="bg-transparent font-extrabold focus:outline-hidden text-slate-700 cursor-pointer max-w-[150px] md:max-w-xs pl-1 enabled:hover:text-blue-600"
               >
                 <option value="ALL">Semua Desa/Kelurahan</option>
-                {getDesaList(filters.provinsi, filters.kabupaten, filters.kecamatan).map((d) => (
+                {getDynamicDesaList().map((d) => (
                   <option key={d} value={d}>
                     {d}
                   </option>
@@ -254,13 +342,26 @@ export default function App() {
             </div>
 
             {/* Update Timestamps */}
-            <div className="hidden sm:block text-right pr-1">
-              <span className="text-[10px] text-slate-400 font-extrabold block">
-                UPDATE TERAKHIR
-              </span>
-              <span className="text-xs text-slate-600 font-extrabold">
-                24 Mei 2025 10:30
-              </span>
+            <div className="flex items-center gap-3">
+              <button
+                id="btn-refresh-data"
+                onClick={() => triggerSync()}
+                disabled={isSheetsLoading}
+                className="flex items-center gap-1.5 px-3 py-2 bg-slate-50 border border-slate-200 hover:border-slate-300 hover:bg-slate-100 text-slate-700 disabled:opacity-50 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
+                title="Refresh data aktual dari Google Sheets"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${isSheetsLoading ? "animate-spin" : ""}`} />
+                <span>Refresh Data</span>
+              </button>
+              
+              <div className="hidden sm:block text-right pr-1">
+                <span className="text-[9px] text-slate-400 font-black block uppercase tracking-widest leading-none">
+                  SINKRONISASI AKTUAL
+                </span>
+                <span className="text-xs text-slate-600 font-black font-mono">
+                  {lastRefreshed.toLocaleTimeString("id-ID")} WIB
+                </span>
+              </div>
             </div>
 
             {/* Download Button */}
@@ -344,6 +445,19 @@ export default function App() {
           />
 
           {/* MAIN TAB CONTENT CONTROLLING */}
+          {activeTab === "sumber-data" && (
+            <SheetsSyncPanel
+              useGoogleSheets={useGoogleSheets}
+              setUseGoogleSheets={setUseGoogleSheets}
+              spreadsheetUrl={spreadsheetUrl}
+              setSpreadsheetUrl={setSpreadsheetUrl}
+              isSheetsLoading={isSheetsLoading}
+              sheetsError={sheetsError}
+              sheetsData={sheetsData}
+              onTriggerSync={() => triggerSync()}
+            />
+          )}
+
           {activeTab === "ringkasan" && (
             <div className="space-y-6">
               {/* Row 1: Interactive Map & Ringkasan Table List */}
@@ -701,7 +815,7 @@ export default function App() {
                       <div>
                         <span className="text-[10px] text-slate-400 font-extrabold uppercase">Kinerja Operasional</span>
                         <span className="text-xl font-extrabold text-emerald-600 block">
-                          Baik ({formatIndoDecimal(activeData.bumDesaBersama.pemeringkatanNilai)})
+                          {activeData.bumDesaBersama.pemeringkatanKategori || "Baik"} ({formatIndoDecimal(activeData.bumDesaBersama.pemeringkatanNilai)})
                         </span>
                       </div>
                     </div>

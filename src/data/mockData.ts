@@ -11,44 +11,44 @@ function getSeedForString(str: string): number {
 
 // Complete 38 Provinces of Indonesia with realistic administrative counts
 const provincesMeta = [
-  { id: "11", name: "Aceh", kab: 23, kec: 289, desa: 6497, idBase: 0.648, bumdes: 5950 },
-  { id: "12", name: "Sumatera Utara", kab: 33, kec: 450, desa: 5417, idBase: 0.655, bumdes: 4120 },
-  { id: "13", name: "Sumatera Barat", kab: 19, kec: 179, desa: 928, idBase: 0.685, bumdes: 880 },
-  { id: "14", name: "Riau", kab: 12, kec: 169, desa: 1591, idBase: 0.665, bumdes: 1420 },
-  { id: "15", name: "Jambi", kab: 11, kec: 141, desa: 1414, idBase: 0.645, bumdes: 1150 },
-  { id: "16", name: "Sumatera Selatan", kab: 17, kec: 236, desa: 2853, idBase: 0.635, bumdes: 2210 },
-  { id: "17", name: "Bengkulu", kab: 10, kec: 128, desa: 1341, idBase: 0.612, bumdes: 1020 },
-  { id: "18", name: "Lampung", kab: 15, kec: 228, desa: 2435, idBase: 0.649, bumdes: 2010 },
-  { id: "19", name: "Kepulauan Bangka Belitung", kab: 7, kec: 47, desa: 309, idBase: 0.702, bumdes: 280 },
-  { id: "21", name: "Kepulauan Riau", kab: 7, kec: 75, desa: 275, idBase: 0.691, bumdes: 240 },
-  { id: "31", name: "DKI Jakarta", kab: 1, kec: 2, desa: 11, idBase: 0.771, bumdes: 11 },
-  { id: "32", name: "Jawa Barat", kab: 27, kec: 627, desa: 5312, idBase: 0.702, bumdes: 4890 },
-  { id: "33", name: "Jawa Tengah", kab: 35, kec: 576, desa: 7809, idBase: 0.719, bumdes: 5340 },
-  { id: "34", name: "DI Yogyakarta", kab: 5, kec: 78, desa: 392, idBase: 0.801, bumdes: 385 },
-  { id: "35", name: "Jawa Timur", kab: 38, kec: 666, desa: 7724, idBase: 0.698, bumdes: 6190 },
-  { id: "36", name: "Banten", kab: 8, kec: 155, desa: 1238, idBase: 0.668, bumdes: 1100 },
-  { id: "51", name: "Bali", kab: 9, kec: 57, desa: 636, idBase: 0.742, bumdes: 620 },
-  { id: "52", name: "Nusa Tenggara Barat", kab: 10, kec: 117, desa: 1005, idBase: 0.658, bumdes: 950 },
-  { id: "53", name: "Nusa Tenggara Timur", kab: 22, kec: 309, desa: 3026, idBase: 0.582, bumdes: 2450 },
-  { id: "61", name: "Kalimantan Barat", kab: 14, kec: 174, desa: 2031, idBase: 0.615, bumdes: 1820 },
-  { id: "62", name: "Kalimantan Tengah", kab: 14, kec: 136, desa: 1432, idBase: 0.608, bumdes: 1250 },
-  { id: "63", name: "Kalimantan Selatan", kab: 13, kec: 153, desa: 1864, idBase: 0.638, bumdes: 1540 },
-  { id: "64", name: "Kalimantan Timur", kab: 10, kec: 103, desa: 841, idBase: 0.672, bumdes: 750 },
-  { id: "65", name: "Kalimantan Utara", kab: 5, kec: 53, desa: 447, idBase: 0.621, bumdes: 380 },
-  { id: "71", name: "Sulawesi Utara", kab: 15, kec: 171, desa: 1507, idBase: 0.652, bumdes: 1290 },
-  { id: "72", name: "Sulawesi Tengah", kab: 13, kec: 175, desa: 1842, idBase: 0.621, bumdes: 1480 },
-  { id: "73", name: "Sulawesi Selatan", kab: 24, kec: 307, desa: 2253, idBase: 0.662, bumdes: 1950 },
-  { id: "74", name: "Sulawesi Tenggara", kab: 17, kec: 220, desa: 1908, idBase: 0.618, bumdes: 1580 },
-  { id: "75", name: "Gorontalo", kab: 6, kec: 77, desa: 657, idBase: 0.622, bumdes: 510 },
-  { id: "76", name: "Sulawesi Barat", kab: 6, kec: 69, desa: 575, idBase: 0.605, bumdes: 420 },
-  { id: "81", name: "Maluku", kab: 11, kec: 118, desa: 1198, idBase: 0.592, bumdes: 920 },
-  { id: "82", name: "Maluku Utara", kab: 10, kec: 115, desa: 1063, idBase: 0.581, bumdes: 810 },
-  { id: "91", name: "Papua Barat", kab: 7, kec: 86, desa: 803, idBase: 0.552, bumdes: 450 },
-  { id: "92", name: "Papua", kab: 9, kec: 105, desa: 935, idBase: 0.548, bumdes: 380 },
-  { id: "93", name: "Papua Selatan", kab: 4, kec: 74, desa: 674, idBase: 0.535, bumdes: 290 },
-  { id: "94", name: "Papua Tengah", kab: 8, kec: 131, desa: 1131, idBase: 0.521, bumdes: 310 },
-  { id: "95", name: "Papua Pegunungan", kab: 8, kec: 252, desa: 2617, idBase: 0.495, bumdes: 420 },
-  { id: "96", name: "Papua Barat Daya", kab: 6, kec: 132, desa: 939, idBase: 0.542, bumdes: 340 }
+  { id: "11", name: "Aceh", kab: 23, kec: 289, desa: 6497, idBase: 0.648, bumdes: 7463 },
+  { id: "12", name: "Sumatera Utara", kab: 33, kec: 450, desa: 5417, idBase: 0.655, bumdes: 5168 },
+  { id: "13", name: "Sumatera Barat", kab: 19, kec: 179, desa: 928, idBase: 0.685, bumdes: 1104 },
+  { id: "14", name: "Riau", kab: 12, kec: 169, desa: 1591, idBase: 0.665, bumdes: 1781 },
+  { id: "15", name: "Jambi", kab: 11, kec: 141, desa: 1414, idBase: 0.645, bumdes: 1442 },
+  { id: "16", name: "Sumatera Selatan", kab: 17, kec: 236, desa: 2853, idBase: 0.635, bumdes: 2772 },
+  { id: "17", name: "Bengkulu", kab: 10, kec: 128, desa: 1341, idBase: 0.612, bumdes: 1279 },
+  { id: "18", name: "Lampung", kab: 15, kec: 228, desa: 2435, idBase: 0.649, bumdes: 2521 },
+  { id: "19", name: "Kepulauan Bangka Belitung", kab: 7, kec: 47, desa: 309, idBase: 0.702, bumdes: 351 },
+  { id: "21", name: "Kepulauan Riau", kab: 7, kec: 75, desa: 275, idBase: 0.691, bumdes: 301 },
+  { id: "31", name: "DKI Jakarta", kab: 1, kec: 2, desa: 11, idBase: 0.771, bumdes: 14 },
+  { id: "32", name: "Jawa Barat", kab: 27, kec: 627, desa: 5312, idBase: 0.702, bumdes: 6133 },
+  { id: "33", name: "Jawa Tengah", kab: 35, kec: 576, desa: 7809, idBase: 0.719, bumdes: 6698 },
+  { id: "34", name: "DI Yogyakarta", kab: 5, kec: 78, desa: 392, idBase: 0.801, bumdes: 483 },
+  { id: "35", name: "Jawa Timur", kab: 38, kec: 666, desa: 7725, idBase: 0.698, bumdes: 7764 },
+  { id: "36", name: "Banten", kab: 8, kec: 155, desa: 1238, idBase: 0.668, bumdes: 1380 },
+  { id: "51", name: "Bali", kab: 9, kec: 57, desa: 636, idBase: 0.742, bumdes: 778 },
+  { id: "52", name: "Nusa Tenggara Barat", kab: 10, kec: 117, desa: 1005, idBase: 0.658, bumdes: 1192 },
+  { id: "53", name: "Nusa Tenggara Timur", kab: 22, kec: 309, desa: 3026, idBase: 0.582, bumdes: 3073 },
+  { id: "61", name: "Kalimantan Barat", kab: 14, kec: 174, desa: 2031, idBase: 0.615, bumdes: 2283 },
+  { id: "62", name: "Kalimantan Tengah", kab: 14, kec: 136, desa: 1432, idBase: 0.608, bumdes: 1568 },
+  { id: "63", name: "Kalimantan Selatan", kab: 13, kec: 153, desa: 1864, idBase: 0.638, bumdes: 1932 },
+  { id: "64", name: "Kalimantan Timur", kab: 10, kec: 103, desa: 841, idBase: 0.672, bumdes: 941 },
+  { id: "65", name: "Kalimantan Utara", kab: 5, kec: 53, desa: 447, idBase: 0.621, bumdes: 477 },
+  { id: "71", name: "Sulawesi Utara", kab: 15, kec: 171, desa: 1507, idBase: 0.652, bumdes: 1618 },
+  { id: "72", name: "Sulawesi Tengah", kab: 13, kec: 175, desa: 1842, idBase: 0.621, bumdes: 1856 },
+  { id: "73", name: "Sulawesi Selatan", kab: 24, kec: 307, desa: 2253, idBase: 0.662, bumdes: 2446 },
+  { id: "74", name: "Sulawesi Tenggara", kab: 17, kec: 220, desa: 1908, idBase: 0.618, bumdes: 1982 },
+  { id: "75", name: "Gorontalo", kab: 6, kec: 77, desa: 657, idBase: 0.622, bumdes: 640 },
+  { id: "76", name: "Sulawesi Barat", kab: 6, kec: 69, desa: 575, idBase: 0.605, bumdes: 527 },
+  { id: "81", name: "Maluku", kab: 11, kec: 118, desa: 1198, idBase: 0.592, bumdes: 1154 },
+  { id: "82", name: "Maluku Utara", kab: 10, kec: 115, desa: 1063, idBase: 0.581, bumdes: 1016 },
+  { id: "91", name: "Papua Barat", kab: 7, kec: 86, desa: 803, idBase: 0.552, bumdes: 564 },
+  { id: "92", name: "Papua", kab: 9, kec: 105, desa: 935, idBase: 0.548, bumdes: 477 },
+  { id: "93", name: "Papua Selatan", kab: 4, kec: 74, desa: 674, idBase: 0.535, bumdes: 364 },
+  { id: "94", name: "Papua Tengah", kab: 8, kec: 131, desa: 1131, idBase: 0.521, bumdes: 389 },
+  { id: "95", name: "Papua Pegunungan", kab: 8, kec: 252, desa: 2617, idBase: 0.495, bumdes: 527 },
+  { id: "96", name: "Papua Barat Daya", kab: 6, kec: 132, desa: 939, idBase: 0.542, bumdes: 426 }
 ];
 
 export const provinceDataList: ProvinceData[] = provincesMeta.map(pm => {
@@ -226,12 +226,12 @@ export const nationalSummary: ProvinceData = {
   name: "Semua Provinsi",
   kabupatenCount: 514,
   kecamatanCount: 7277,
-  desaCount: 75265,
+  desaCount: 75266,
   indeksDesa: {
-    "2022": 0.589,
-    "2023": 0.612,
-    "2024": 0.636,
-    "2025": 0.678,
+    "2022": 0.61214,
+    "2023": 0.65586,
+    "2024": 0.68532,
+    "2025": 0.7060907572,
   },
   idDimensions: {
     "2025": {
@@ -267,12 +267,12 @@ export const nationalSummary: ProvinceData = {
       tataKelola: 0.590,
     }
   },
-  bumDesaCount: 51689,
+  bumDesaCount: 64831,
   bumDesaStatus: {
-    "2025": { aktif: 36182, tidakAktif: 10337, dalamPengembangan: 5170 },
-    "2024": { aktif: 32450, tidakAktif: 12640, dalamPengembangan: 6599 },
-    "2023": { aktif: 28900, tidakAktif: 14850, dalamPengembangan: 7939 },
-    "2022": { aktif: 25400, tidakAktif: 17200, dalamPengembangan: 9089 },
+    "2025": { aktif: 46678, tidakAktif: 11670, dalamPengembangan: 6483 },
+    "2024": { aktif: 40700, tidakAktif: 15850, dalamPengembangan: 8281 },
+    "2023": { aktif: 36200, tidakAktif: 18600, dalamPengembangan: 10031 },
+    "2022": { aktif: 31800, tidakAktif: 21500, dalamPengembangan: 11531 },
   },
   bumDesaPemeringkatan: {
     "2025": {
@@ -319,7 +319,7 @@ export const nationalSummary: ProvinceData = {
     "2025": 963.8,
   },
   nib: {
-    count: 38214,
+    count: 47943,
     percentage: 73.95,
   },
   programInovasi: {
@@ -488,7 +488,29 @@ export function getDesaList(provinsiId: string, kabupatenName: string, kecamatan
 export function getFilteredData(filters: DashboardFilters): ProvinceData {
   let baseData: ProvinceData;
   if (filters.provinsi === "ALL") {
-    baseData = { ...nationalSummary };
+    const sum2022 = parseFloat(provinceDataList.reduce((sum, p) => sum + (p.bagiHasilPADes["2022"] || 0), 0).toFixed(1));
+    const sum2023 = parseFloat(provinceDataList.reduce((sum, p) => sum + (p.bagiHasilPADes["2023"] || 0), 0).toFixed(1));
+    const sum2024 = parseFloat(provinceDataList.reduce((sum, p) => sum + (p.bagiHasilPADes["2024"] || 0), 0).toFixed(1));
+    const sum2025 = parseFloat(provinceDataList.reduce((sum, p) => sum + (p.bagiHasilPADes["2025"] || 0), 0).toFixed(1));
+
+    const totalNIBCount = provinceDataList.reduce((sum, p) => sum + p.nib.count, 0);
+    const totalBumDesa = provinceDataList.reduce((sum, p) => sum + p.bumDesaCount, 0);
+    const nibPercentage = parseFloat(((totalNIBCount / totalBumDesa) * 100).toFixed(2));
+
+    baseData = {
+      ...nationalSummary,
+      bumDesaCount: totalBumDesa,
+      bagiHasilPADes: {
+        "2022": sum2022,
+        "2023": sum2023,
+        "2024": sum2024,
+        "2025": sum2025
+      },
+      nib: {
+        count: totalNIBCount,
+        percentage: nibPercentage
+      }
+    };
   } else {
     const found = provinceDataList.find(p => p.id === filters.provinsi);
     baseData = found ? { ...found } : { ...nationalSummary };

@@ -14,7 +14,16 @@ export function formatIndoNumber(num: number): string {
 }
 
 export function formatIndoDecimal(num: number): string {
-  return num.toFixed(3).replace(".", ",");
+  const val = num > 10.0 ? num / 100 : num;
+  return val.toFixed(3).replace(".", ",");
+}
+
+export function formatIndoPrecise(num: number): string {
+  const val = num <= 1.2 ? num * 100 : num;
+  const str = val.toString();
+  const decimalPart = str.split(".")[1] || "";
+  const len = Math.max(3, Math.min(10, decimalPart.length));
+  return val.toFixed(len).replace(".", ",");
 }
 
 export default function KPICards({ data, tahun, isAllProvinces }: KPICardsProps) {
@@ -24,10 +33,15 @@ export default function KPICards({ data, tahun, isAllProvinces }: KPICardsProps)
   const kecValue = formatIndoNumber(data.kecamatanCount);
   const desaValue = formatIndoNumber(data.desaCount);
   
-  const idValue = data.indeksDesa[tahun] || 0.678;
+  const idValue = data.indeksDesa[tahun] || 70.60907572;
+  const rawIdValue = idValue <= 1.2 ? idValue * 100 : idValue;
   const prevYear = (parseInt(tahun) - 1).toString();
-  const idPrevValue = data.indeksDesa[prevYear] || (idValue - 0.042);
-  const diff = idValue - idPrevValue;
+  
+  const rawIdPrevValue = data.indeksDesa[prevYear]
+    ? (data.indeksDesa[prevYear]! <= 1.2 ? data.indeksDesa[prevYear]! * 100 : data.indeksDesa[prevYear]!)
+    : (rawIdValue - 4.2);
+
+  const diff = rawIdValue - rawIdPrevValue;
   const trendSign = diff >= 0 ? "↑" : "↓";
   const trendColor = diff >= 0 ? "text-emerald-600 font-semibold" : "text-rose-600 font-semibold";
   const trendText = `${trendSign} ${Math.abs(diff).toFixed(3).replace(".", ",")} dari ${prevYear}`;
@@ -78,7 +92,7 @@ export default function KPICards({ data, tahun, isAllProvinces }: KPICardsProps)
     {
       id: "kpi-indeks",
       title: `Rata-rata Indeks Desa (ID ${tahun})`,
-      value: formatIndoDecimal(idValue),
+      value: formatIndoPrecise(idValue),
       suffix: "",
       subtext: (
         <span className={trendColor}>

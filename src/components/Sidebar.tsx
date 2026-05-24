@@ -9,7 +9,8 @@ import {
   Users,
   Info,
   Menu,
-  X
+  X,
+  Table
 } from "lucide-react";
 
 interface SidebarProps {
@@ -27,6 +28,7 @@ export default function Sidebar({
 }: SidebarProps) {
   const menuItems = [
     { id: "ringkasan", label: "Ringkasan", icon: Home },
+    { id: "sumber-data", label: "Sumber Data Sheets", icon: Table },
     { id: "indeks-desa", label: "Indeks Desa", icon: BarChart3 },
     { id: "bum-desa", label: "BUM Desa", icon: Landmark },
     { id: "pemeringkatan", label: "Pemeringkatan", icon: Trophy },

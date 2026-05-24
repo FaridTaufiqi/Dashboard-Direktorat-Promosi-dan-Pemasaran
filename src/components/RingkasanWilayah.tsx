@@ -50,20 +50,20 @@ export default function RingkasanWilayah({
         </div>
 
         {/* Scrollable Table Area */}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto max-h-[340px] overflow-y-auto pr-1 scrollbar-thin">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-slate-200 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                <th className="pb-2 font-semibold">No</th>
-                <th className="pb-2 font-semibold">Provinsi</th>
-                <th className="pb-2 text-center font-semibold">Kab</th>
-                <th className="pb-2 text-center font-semibold">Kec</th>
-                <th className="pb-2 text-right font-semibold pr-2">Desa</th>
-                <th className="pb-2 font-semibold w-16">Visual</th>
+              <tr className="border-b border-slate-200 text-[10px] font-bold text-slate-400 uppercase tracking-wider sticky top-0 bg-white z-10">
+                <th className="pb-2 font-semibold bg-white">No</th>
+                <th className="pb-2 font-semibold bg-white">Provinsi</th>
+                <th className="pb-2 text-center font-semibold bg-white">Kab</th>
+                <th className="pb-2 text-center font-semibold bg-white">Kec</th>
+                <th className="pb-2 text-right font-semibold pr-2 bg-white">Desa</th>
+                <th className="pb-2 font-semibold w-16 bg-white">Visual</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredProvinces.slice(0, 8).map((prov, index) => {
+              {filteredProvinces.map((prov, index) => {
                 const isSelected = selectedProvince === prov.id;
                 const percentOfMax = (prov.desaCount / maxDesa) * 100;
                 
@@ -72,7 +72,7 @@ export default function RingkasanWilayah({
                     key={prov.id}
                     onClick={() => onSelectProvince(prov.id)}
                     className={`group cursor-pointer text-xs transition-colors hover:bg-slate-50 ${
-                      isSelected ? "bg-slate-55 bg-blue-50/60 font-bold" : ""
+                      isSelected ? "bg-blue-50/60 font-bold" : ""
                     }`}
                   >
                     <td className="py-2.5 pl-1 text-slate-400 font-bold font-mono">
