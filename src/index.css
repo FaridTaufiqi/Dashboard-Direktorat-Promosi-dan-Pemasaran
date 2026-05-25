@@ -36,15 +36,11 @@ body {
 .leaflet-container img.leaflet-tile {
   max-width: none !important;
   max-height: none !important;
-  height: auto !important;
-  width: auto !important;
 }
 
 .leaflet-container .leaflet-tile-container img {
   max-width: none !important;
   max-height: none !important;
-  height: auto !important;
-  width: auto !important;
 }
 
 /* Ensure Leaflet controls and markers do not inherit Tailwind defaults that break layout */
@@ -53,6 +49,12 @@ body {
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
   box-sizing: content-box;
+}
+
+/* Ensure Leaflet container does not display a solid blue block background when loading, offline or rendering tiles */
+.leaflet-container {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
 }
 
 

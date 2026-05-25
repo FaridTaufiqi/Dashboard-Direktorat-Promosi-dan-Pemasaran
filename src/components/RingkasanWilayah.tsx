@@ -130,7 +130,7 @@ export default function RingkasanWilayah({
         {selectedProvince !== "ALL" && (
           <button
             onClick={() => onSelectProvince("ALL")}
-            className="text-[10px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 hover:bg-slate-205 transition-colors"
+            className="text-[10px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 hover:bg-slate-200 transition-colors"
           >
             <RotateCcw className="w-3 h-3" />
             Reset Filter

@@ -29,6 +29,10 @@ export interface ProvinceData {
       aktif: number;
       tidakAktif: number;
       dalamPengembangan: number;
+      perintis?: number;
+      pemula?: number;
+      berkembang?: number;
+      maju?: number;
     };
   };
   
@@ -78,6 +82,10 @@ export interface ProvinceData {
     asetModal?: number;
     administrasi?: number;
     manfaat?: number;
+    perintis?: number;
+    pemula?: number;
+    berkembang?: number;
+    maju?: number;
   };
 }
 

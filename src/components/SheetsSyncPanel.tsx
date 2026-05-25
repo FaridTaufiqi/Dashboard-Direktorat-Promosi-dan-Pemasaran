@@ -80,7 +80,7 @@ export default function SheetsSyncPanel({
           <span className={`text-[10.5px] font-black uppercase tracking-wider px-3 py-1 rounded-full ${
             useGoogleSheets 
               ? "bg-emerald-100 text-emerald-800 border border-emerald-200" 
-              : "bg-blue-105/30 text-blue-800 border border-blue-100"
+              : "bg-blue-50 text-blue-805 border border-blue-200"
           }`}>
             {useGoogleSheets ? "● Google Sheet Resmi" : "○ Simulasi Padat"}
           </span>
@@ -145,7 +145,7 @@ export default function SheetsSyncPanel({
                 }`}
               >
                 <div className="flex items-center gap-2 mb-1">
-                  <span className={`w-3 h-3 rounded-full border-2 ${!useGoogleSheets ? "bg-blue-600 border-blue-601" : "border-slate-350"}`} />
+                  <span className={`w-3 h-3 rounded-full border-2 ${!useGoogleSheets ? "bg-blue-600 border-blue-600" : "border-slate-300"}`} />
                   <span className="text-xs font-black text-slate-800 uppercase">Data Contoh (Simulasi)</span>
                 </div>
                 <p className="text-[11px] text-slate-400 font-medium leading-normal pl-5">
@@ -168,7 +168,7 @@ export default function SheetsSyncPanel({
                 }`}
               >
                 <div className="flex items-center gap-2 mb-1">
-                  <span className={`w-3 h-3 rounded-full border-2 ${useGoogleSheets ? "bg-emerald-600 border-emerald-605" : "border-slate-350"}`} />
+                  <span className={`w-3 h-3 rounded-full border-2 ${useGoogleSheets ? "bg-emerald-600 border-emerald-600" : "border-slate-300"}`} />
                   <span className="text-xs font-black text-emerald-800 uppercase">Data Google Sheet</span>
                 </div>
                 <p className="text-[11px] text-slate-400 font-medium leading-normal pl-5">

@@ -52,36 +52,66 @@ export default function BUMDesaChart({
   onSelectProvince,
   provinceList,
 }: BUMDesaChartProps) {
+  const [isBersama, setIsBersama] = React.useState(false);
+
   // 1. Calculate the average of aspects to drive dynamic grading distribution
-  const aspects = data.bumDesaPemeringkatan[tahun] || data.bumDesaPemeringkatan["2025"] || {
-    kelembagaan: 0.72,
-    manajemen: 0.67,
-    usaha: 0.69,
-    kemitraan: 0.61,
-    asetModal: 0.65,
-    administrasi: 0.63,
-    manfaat: 0.67
-  };
+  const aspects = !isBersama
+    ? (data.bumDesaPemeringkatan[tahun] || data.bumDesaPemeringkatan["2025"] || {
+        kelembagaan: 0.72,
+        manajemen: 0.67,
+        usaha: 0.69,
+        kemitraan: 0.61,
+        asetModal: 0.65,
+        administrasi: 0.63,
+        manfaat: 0.67
+      })
+    : {
+        kelembagaan: data.bumDesaBersama.kelembagaan !== undefined ? data.bumDesaBersama.kelembagaan : 0.65,
+        manajemen: data.bumDesaBersama.manajemen !== undefined ? data.bumDesaBersama.manajemen : 0.65,
+        usaha: data.bumDesaBersama.usaha !== undefined ? data.bumDesaBersama.usaha : 0.65,
+        kemitraan: data.bumDesaBersama.kemitraan !== undefined ? data.bumDesaBersama.kemitraan : 0.65,
+        asetModal: data.bumDesaBersama.asetModal !== undefined ? data.bumDesaBersama.asetModal : 0.65,
+        administrasi: data.bumDesaBersama.administrasi !== undefined ? data.bumDesaBersama.administrasi : 0.65,
+        manfaat: data.bumDesaBersama.manfaat !== undefined ? data.bumDesaBersama.manfaat : 0.65
+      };
   
   const totalAspects = aspects.kelembagaan + aspects.manajemen + aspects.usaha + aspects.kemitraan + aspects.asetModal + aspects.administrasi + aspects.manfaat;
   const avgAspectScore = totalAspects / 7;
 
   // 2. Fetch the total populations
-  const activeYearData = data.bumDesaStatus[tahun] || data.bumDesaStatus["2025"] || {
-    aktif: 3600,
-    tidakAktif: 1000,
-    dalamPengembangan: 400
-  };
+  const activeYearData = !isBersama
+    ? (data.bumDesaStatus[tahun] || data.bumDesaStatus["2025"] || {
+        aktif: 3600,
+        tidakAktif: 1000,
+        dalamPengembangan: 400
+      })
+    : {
+        aktif: data.bumDesaBersama.aktif,
+        tidakAktif: data.bumDesaBersama.tidakAktif,
+        dalamPengembangan: 0,
+        perintis: data.bumDesaBersama.perintis !== undefined ? data.bumDesaBersama.perintis : Math.round(data.bumDesaBersama.count * 0.15),
+        pemula: data.bumDesaBersama.pemula !== undefined ? data.bumDesaBersama.pemula : Math.round(data.bumDesaBersama.count * 0.25),
+        berkembang: data.bumDesaBersama.berkembang !== undefined ? data.bumDesaBersama.berkembang : Math.round(data.bumDesaBersama.count * 0.40),
+        maju: data.bumDesaBersama.maju !== undefined ? data.bumDesaBersama.maju : data.bumDesaBersama.count - Math.round(data.bumDesaBersama.count * 0.8)
+      };
   
-  const totalBumDes = activeYearData.aktif + activeYearData.tidakAktif + activeYearData.dalamPengembangan;
-
   // 3. Compute the breakdown for the PEMERINGKATAN categories (PERINTIS, PEMULA, BERKEMBANG, MAJU)
+  const fallbackTotal = !isBersama 
+    ? (activeYearData.aktif + activeYearData.tidakAktif + activeYearData.dalamPengembangan)
+    : data.bumDesaBersama.count;
+
   const seedKey = data.id || "ALL";
   const gradingBreakdown = useMemo(() => {
-    return getBumDesaPemeringkatanBreakdown(totalBumDes, avgAspectScore, seedKey);
-  }, [totalBumDes, avgAspectScore, seedKey]);
+    return getBumDesaPemeringkatanBreakdown(fallbackTotal, avgAspectScore, seedKey);
+  }, [fallbackTotal, avgAspectScore, seedKey]);
 
-  const { perintis, pemula, berkembang, maju } = gradingBreakdown;
+  // Use real sheet statistics if populated, otherwise fallback to gaussian weights
+  const perintis = activeYearData.perintis !== undefined ? activeYearData.perintis : gradingBreakdown.perintis;
+  const pemula = activeYearData.pemula !== undefined ? activeYearData.pemula : gradingBreakdown.pemula;
+  const berkembang = activeYearData.berkembang !== undefined ? activeYearData.berkembang : gradingBreakdown.berkembang;
+  const maju = activeYearData.maju !== undefined ? activeYearData.maju : gradingBreakdown.maju;
+
+  const totalBumDes = perintis + pemula + berkembang + maju;
 
   const pctPerintis = totalBumDes > 0 ? (perintis / totalBumDes) * 100 : 0;
   const pctPemula = totalBumDes > 0 ? (pemula / totalBumDes) * 100 : 0;
@@ -105,20 +135,50 @@ export default function BUMDesaChart({
   // 5. Sorted provinces by BUM Desa density (ALL 38 Provinces shown in scroll view!)
   const sortedProvinces = useMemo(() => {
     return [...provinceList]
-      .map(p => ({ id: p.id, name: p.name, count: p.bumDesaCount }))
+      .map(p => ({ 
+        id: p.id, 
+        name: p.name, 
+        count: isBersama ? p.bumDesaBersama.count : p.bumDesaCount 
+      }))
       .sort((a, b) => b.count - a.count);
-  }, [provinceList]);
+  }, [provinceList, isBersama]);
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col justify-between h-full space-y-4">
       {/* Header Panel */}
-      <div>
-        <h3 className="text-xs font-black text-slate-700 uppercase tracking-widest leading-none mb-1">
-          BUM DESA PER PROVINSI
-        </h3>
-        <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
-          STATUS & PEMERINGKATAN BADAN USAHA MILIK DESA ({tahun})
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-xs font-black text-slate-700 uppercase tracking-widest leading-none mb-1">
+            {isBersama ? "BUM DESA BERSAMA PER PROVINSI" : "BUM DESA PER PROVINSI"}
+          </h3>
+          <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+            STATUS & PEMERINGKATAN BADAN USAHA ({tahun})
+          </p>
+        </div>
+
+        {/* Custom Tab Switcher */}
+        <div className="flex bg-slate-100 p-0.5 rounded-lg shrink-0 border border-slate-200">
+          <button
+            onClick={() => setIsBersama(false)}
+            className={`px-2.5 py-1 text-[9px] font-extrabold rounded-md transition-all ${
+              !isBersama
+                ? "bg-white text-blue-700 shadow-xs"
+                : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            BUM DESA
+          </button>
+          <button
+            onClick={() => setIsBersama(true)}
+            className={`px-2.5 py-1 text-[9px] font-extrabold rounded-md transition-all ${
+              isBersama
+                ? "bg-white text-blue-700 shadow-xs"
+                : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            BERSAMA
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center my-1.5">

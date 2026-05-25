@@ -14,8 +14,7 @@ export function formatIndoNumber(num: number): string {
 }
 
 export function formatIndoDecimal(num: number): string {
-  const val = num > 10.0 ? num / 100 : num;
-  return val.toFixed(3).replace(".", ",");
+  return num.toFixed(3).replace(".", ",");
 }
 
 export function formatIndoPrecise(num: number): string {
@@ -67,7 +66,7 @@ export default function KPICards({ data, tahun, isAllProvinces }: KPICardsProps)
       subtext: isAllProvinces ? "Kabupaten/Kota Nasional" : `Di ${data.name}`,
       icon: Building2,
       bg: "bg-white border-slate-200 hover:border-slate-300",
-      iconBg: "bg-emerald-50 text-emerald-600 border border-emerald-110",
+      iconBg: "bg-emerald-50 text-emerald-600 border border-emerald-100",
     },
     {
       id: "kpi-kec",
