@@ -118,9 +118,8 @@ export default function SheetsSyncPanel({
                 <input
                   type="text"
                   value={spreadsheetUrl}
-                  onChange={(e) => setSpreadsheetUrl(e.target.value)}
-                  placeholder="Masukkan link google spreadsheet..."
-                  className="flex-1 text-xs px-3 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 font-mono text-slate-700 shadow-inner"
+                  readOnly
+                  className="flex-1 text-[10px] px-3 py-2.5 bg-slate-100 border border-slate-200 rounded-xl focus:outline-none font-mono text-slate-500 shadow-inner cursor-not-allowed cursor-default select-all"
                 />
                 
                 <button
@@ -132,6 +131,9 @@ export default function SheetsSyncPanel({
                   <span>{isSheetsLoading ? "Menyinkronkan..." : "Sinkronkan"}</span>
                 </button>
               </div>
+              <p className="text-[10px] text-blue-600 font-bold uppercase tracking-wider mt-1.5 flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5" /> Terkunci pada koneksi resmi khusus Sheet "final"
+              </p>
             </div>
 
             {/* Switch Mode Controls */}

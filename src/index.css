@@ -13,6 +13,11 @@ body {
   overflow-x: hidden;
 }
 
+/* Fix Tailwind CSS setting block display on svg/img which breaks UI layouts and Leaflet maps */
+svg, img, video, canvas, audio, iframe, embed, object {
+  display: inline-block;
+}
+
 /* Custom scrollbar for better visual integration */
 ::-webkit-scrollbar {
   width: 6px;

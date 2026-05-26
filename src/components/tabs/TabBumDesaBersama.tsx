@@ -1,5 +1,5 @@
 import React from "react";
-import { formatIndoDecimal, formatIndoNumber } from "../KPICards";
+import { formatIndoPrecise, formatIndoNumber } from "../KPICards";
 import { provinceDataList } from "../../data/mockData";
 import { DashboardFilters } from "../../types";
 
@@ -55,9 +55,9 @@ export default function TabBumDesaBersama({
                 <span className="text-[10px] text-slate-400 font-extrabold uppercase">
                   Kinerja Operasional
                 </span>
-                <span className="text-sm md:text-xl font-extrabold text-emerald-600 block">
+                <span className="text-sm md:text-xl font-extrabold text-emerald-600 block flex-shrink-0 whitespace-nowrap">
                   {activeData.bumDesaBersama.pemeringkatanKategori || "Baik"}{" "}
-                  ({formatIndoDecimal(activeData.bumDesaBersama.pemeringkatanNilai)})
+                  ({formatIndoPrecise(activeData.bumDesaBersama.pemeringkatanNilai || 65)})
                 </span>
               </div>
             </div>
@@ -75,7 +75,7 @@ export default function TabBumDesaBersama({
                   <th className="pb-2">Provinsi</th>
                   <th className="pb-2 text-center text-emerald-600">Konsorsium Aktif</th>
                   <th className="pb-2 text-center text-rose-600">Konsorsium Pasif</th>
-                  <th className="pb-2 text-right">Total Unit BEM</th>
+                  <th className="pb-2 text-right">Total Unit BUMDesma</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium text-slate-655">

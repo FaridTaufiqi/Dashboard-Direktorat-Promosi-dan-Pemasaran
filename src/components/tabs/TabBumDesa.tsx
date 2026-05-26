@@ -53,16 +53,16 @@ export default function TabBumDesa({
 
           <div className="overflow-x-auto">
             <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest block mb-2 leading-none">
-              Peta Klasifikasi Unit BUM Desa per Provinsi
+              Peta Populasi & Status Unit per Provinsi
             </span>
             <table className="w-full text-left font-sans text-xs border-collapse">
               <thead>
                 <tr className="border-b border-slate-200 text-slate-400 font-extrabold text-[10px] uppercase">
                   <th className="pb-2">Provinsi</th>
-                  <th className="pb-2 text-center text-emerald-600">Aktif</th>
-                  <th className="pb-2 text-center text-rose-600">Mati/Pasif</th>
-                  <th className="pb-2 text-center text-amber-600">Rintisan</th>
-                  <th className="pb-2 text-right">Total Unit</th>
+                  <th className="pb-2 text-center text-blue-600">Total BUM Desa</th>
+                  <th className="pb-2 text-center text-blue-600">Total BERSAMA</th>
+                  <th className="pb-2 text-center text-emerald-600">Aktif Keduanya</th>
+                  <th className="pb-2 text-right text-rose-600">Pasif/Mati</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium text-slate-650">
@@ -72,6 +72,10 @@ export default function TabBumDesa({
                     tidakAktif: 0,
                     dalamPengembangan: 0,
                   };
+                  const bersamaSum = prov.bumDesaBersama?.count ?? 0;
+                  const bersamaAktif = prov.bumDesaBersama?.aktif ?? 0;
+                  const bersamaPasif = prov.bumDesaBersama?.tidakAktif ?? 0;
+
                   return (
                     <tr
                       key={prov.id}
@@ -79,17 +83,17 @@ export default function TabBumDesa({
                       onClick={() => handleSelectProvince(prov.id)}
                     >
                       <td className="py-2.5 font-bold text-slate-700">{prov.name}</td>
-                      <td className="py-2.5 text-center font-mono text-emerald-600">
-                        {formatIndoNumber(s.aktif)}
-                      </td>
-                      <td className="py-2.5 text-center font-mono text-rose-650">
-                        {formatIndoNumber(s.tidakAktif)}
-                      </td>
-                      <td className="py-2.5 text-center font-mono text-amber-600">
-                        {formatIndoNumber(s.dalamPengembangan)}
-                      </td>
-                      <td className="py-2.5 text-right font-mono font-bold text-slate-800">
+                      <td className="py-2.5 text-center font-mono text-blue-700 font-bold">
                         {formatIndoNumber(prov.bumDesaCount)}
+                      </td>
+                      <td className="py-2.5 text-center font-mono text-blue-700 font-bold">
+                        {formatIndoNumber(bersamaSum)}
+                      </td>
+                      <td className="py-2.5 text-center font-mono text-emerald-600">
+                        {formatIndoNumber(s.aktif + bersamaAktif)}
+                      </td>
+                      <td className="py-2.5 text-right font-mono text-rose-650">
+                        {formatIndoNumber(s.tidakAktif + bersamaPasif)}
                       </td>
                     </tr>
                   );

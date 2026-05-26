@@ -257,6 +257,20 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
       ? headers.findIndex(h => h === "BUM DESA BERSAMA" || h === "NAMA BUM DESA BERSAMA" || h.includes("BUM DESA BERSAMA"))
       : 36); // Column AK fallback
 
+  const cleanRupiah = (val: string): number => {
+    if (!val) return 0;
+    let s = val.toString().trim();
+    s = s.replace(/^.*?Rp\.?\s*/i, '');
+    const match = s.match(/([.,])\d{2}$/);
+    if (match) {
+      const decimal = s.slice(-3).replace(/[.,]/, '.');
+      const integerStr = s.slice(0, -3).replace(/[^0-9-]/g, '');
+      return parseFloat(integerStr + decimal) || 0;
+    } else {
+      return parseInt(s.replace(/[^0-9-]/g, ''), 10) || 0;
+    }
+  };
+
   const cleanNum = (val: string): number => {
     if (!val) return 0;
     const s = val.trim();
@@ -296,8 +310,8 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
 
   const cleanScore = (val: string): number => {
     const num = cleanNum(val);
-    // If it's on 0-100 scale, fit to 0-1
-    return num > 1.2 ? num / 100 : num;
+    // Konsisten dengan parseRawDimension: normalkan ke skala puluhan (0-100)
+    return num <= 1.2 ? num * 100 : num;
   };
 
   const parseRawSkorId = (val: string): number => {
@@ -341,17 +355,17 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
       aksesibilitas: idxAksesibilitas !== -1 ? parseRawDimension(cells[idxAksesibilitas]) : 65,
       tataKelola: idxTataKelola !== -1 ? parseRawDimension(cells[idxTataKelola]) : 65,
       bumDesaPemeringkatanClass: idxBumDesClass !== -1 ? (cells[idxBumDesClass] || "").trim().toUpperCase() : "",
-      aspekKelembagaan: idxAspekKelembagaan !== -1 ? cleanScore(cells[idxAspekKelembagaan]) : 0.65,
-      aspekManajemen: idxAspekManajemen !== -1 ? cleanScore(cells[idxAspekManajemen]) : 0.65,
-      aspekUsaha: idxAspekUsaha !== -1 ? cleanScore(cells[idxAspekUsaha]) : 0.65,
-      aspekKemitraan: idxAspekKemitraan !== -1 ? cleanScore(cells[idxAspekKemitraan]) : 0.65,
-      aspekAsetModal: idxAspekAsetModal !== -1 ? cleanScore(cells[idxAspekAsetModal]) : 0.65,
-      aspekAdministrasi: idxAspekAdministrasi !== -1 ? cleanScore(cells[idxAspekAdministrasi]) : 0.65,
-      aspekManfaat: idxAspekManfaat !== -1 ? cleanScore(cells[idxAspekManfaat]) : 0.65,
-      bagiHasil2022: idxBagiHasil22 !== -1 ? cleanNum(cells[idxBagiHasil22]) : 0,
-      bagiHasil2023: idxBagiHasil23 !== -1 ? cleanNum(cells[idxBagiHasil23]) : 0,
-      bagiHasil2024: idxBagiHasil24 !== -1 ? cleanNum(cells[idxBagiHasil24]) : 0,
-      bagiHasil2025: idxBagiHasil25 !== -1 ? cleanNum(cells[idxBagiHasil25]) : 0,
+      aspekKelembagaan: idxAspekKelembagaan !== -1 ? cleanScore(cells[idxAspekKelembagaan]) : 0,
+      aspekManajemen: idxAspekManajemen !== -1 ? cleanScore(cells[idxAspekManajemen]) : 0,
+      aspekUsaha: idxAspekUsaha !== -1 ? cleanScore(cells[idxAspekUsaha]) : 0,
+      aspekKemitraan: idxAspekKemitraan !== -1 ? cleanScore(cells[idxAspekKemitraan]) : 0,
+      aspekAsetModal: idxAspekAsetModal !== -1 ? cleanScore(cells[idxAspekAsetModal]) : 0,
+      aspekAdministrasi: idxAspekAdministrasi !== -1 ? cleanScore(cells[idxAspekAdministrasi]) : 0,
+      aspekManfaat: idxAspekManfaat !== -1 ? cleanScore(cells[idxAspekManfaat]) : 0,
+      bagiHasil2022: idxBagiHasil22 !== -1 ? cleanRupiah(cells[idxBagiHasil22]) : 0,
+      bagiHasil2023: idxBagiHasil23 !== -1 ? cleanRupiah(cells[idxBagiHasil23]) : 0,
+      bagiHasil2024: idxBagiHasil24 !== -1 ? cleanRupiah(cells[idxBagiHasil24]) : 0,
+      bagiHasil2025: idxBagiHasil25 !== -1 ? cleanRupiah(cells[idxBagiHasil25]) : 0,
       nib: idxNib !== -1 ? (cells[idxNib] || "").trim() : "",
       bumDesaName: idxBumDesaName !== -1 ? (cells[idxBumDesaName] || "").trim() : "",
       bumDesaBersamaName: idxBumDesaBersamaName !== -1 ? (cells[idxBumDesaBersamaName] || "").trim() : "",
@@ -360,15 +374,15 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
       kodeDesa: idxKodeDesa !== -1 ? (cells[idxKodeDesa] || "").trim() : "",
       pemeringkatanBumDesa: idxPemeringkatanBumDesa !== -1 ? (cells[idxPemeringkatanBumDesa] || "").trim() : "",
       pemeringkatanBumDesaBersama: idxPemeringkatanBumDesaBersama !== -1 ? (cells[idxPemeringkatanBumDesaBersama] || "").trim() : "",
-      aspekKelembagaanBersama: idxAspekKelembagaanBersama !== -1 ? cleanScore(cells[idxAspekKelembagaanBersama]) : 0.65,
-      aspekManajemenBersama: idxAspekManajemenBersama !== -1 ? cleanScore(cells[idxAspekManajemenBersama]) : 0.65,
-      aspekUsahaBersama: idxAspekUsahaBersama !== -1 ? cleanScore(cells[idxAspekUsahaBersama]) : 0.65,
-      aspekKemitraanBersama: idxAspekKemitraanBersama !== -1 ? cleanScore(cells[idxAspekKemitraanBersama]) : 0.65,
-      aspekAsetModalBersama: idxAspekAsetModalBersama !== -1 ? cleanScore(cells[idxAspekAsetModalBersama]) : 0.65,
-      aspekAdministrasiBersama: idxAspekAdministrasiBersama !== -1 ? cleanScore(cells[idxAspekAdministrasiBersama]) : 0.65,
-      aspekManfaatBersama: idxAspekManfaatBersama !== -1 ? cleanScore(cells[idxAspekManfaatBersama]) : 0.65,
-      nilaiPemeringkatanBumDesa: idxNilaiPemeringkatanBumDesa !== -1 ? cleanScore(cells[idxNilaiPemeringkatanBumDesa]) : 0.65,
-      nilaiPemeringkatanBumDesaBersama: idxNilaiPemeringkatanBumDesaBersama !== -1 ? cleanScore(cells[idxNilaiPemeringkatanBumDesaBersama]) : 0.65
+      aspekKelembagaanBersama: idxAspekKelembagaanBersama !== -1 ? cleanScore(cells[idxAspekKelembagaanBersama]) : 0,
+      aspekManajemenBersama: idxAspekManajemenBersama !== -1 ? cleanScore(cells[idxAspekManajemenBersama]) : 0,
+      aspekUsahaBersama: idxAspekUsahaBersama !== -1 ? cleanScore(cells[idxAspekUsahaBersama]) : 0,
+      aspekKemitraanBersama: idxAspekKemitraanBersama !== -1 ? cleanScore(cells[idxAspekKemitraanBersama]) : 0,
+      aspekAsetModalBersama: idxAspekAsetModalBersama !== -1 ? cleanScore(cells[idxAspekAsetModalBersama]) : 0,
+      aspekAdministrasiBersama: idxAspekAdministrasiBersama !== -1 ? cleanScore(cells[idxAspekAdministrasiBersama]) : 0,
+      aspekManfaatBersama: idxAspekManfaatBersama !== -1 ? cleanScore(cells[idxAspekManfaatBersama]) : 0,
+      nilaiPemeringkatanBumDesa: idxNilaiPemeringkatanBumDesa !== -1 ? cleanScore(cells[idxNilaiPemeringkatanBumDesa]) : 0,
+      nilaiPemeringkatanBumDesaBersama: idxNilaiPemeringkatanBumDesaBersama !== -1 ? cleanScore(cells[idxNilaiPemeringkatanBumDesaBersama]) : 0
     };
 
     rawRows.push(row);
@@ -473,7 +487,12 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
     const cntPemulaHex = provRows.filter(r => r.pemeringkatanBumDesa.toUpperCase().includes("PEMULA") || r.pemeringkatanBumDesa.toUpperCase() === "RINTISAN").length;
     const cntBerkembangHex = provRows.filter(r => r.pemeringkatanBumDesa.toUpperCase().includes("BERKEMBANG")).length;
     const cntMajuValueHex = provRows.filter(r => r.pemeringkatanBumDesa.toUpperCase().includes("MAJU")).length;
-    const totalBum = cntPerintisHex + cntPemulaHex + cntBerkembangHex + cntMajuValueHex;
+    
+    // Total distinct BUM Desa dihitung dari kolom AA yang ada isinya
+    const totalBum = new Set(provRows.filter(r => isValidBumName(r.pemeringkatanBumDesa)).map(r => r.bumDesaName + r.pemeringkatanBumDesa + Math.random())).size; // Actually distinct count of Kolom AA? No, it means count of valid entries... Let's just use the valid items count. Wait, distinct count on AA means we count distinct values, which is 4. They probably meant COUNT of non-empty AA cells. Or maybe they meant distinct BUM Desas?
+    // Let's implement distinct BUM Desa by bumDesaName where AA has value:
+    const uniqueBumDesas = new Set(provRows.filter(r => r.pemeringkatanBumDesa.trim() !== "" && r.pemeringkatanBumDesa !== "-").map(r => r.bumDesaName || r.kodeDesa));
+    const finalTotalBum = provRows.filter(r => r.pemeringkatanBumDesa.trim() !== "" && r.pemeringkatanBumDesa !== "-").length;
 
     // BUM Desa Bersama Classifications Status Breakdown
     // dihitung dari distinct / frequency pada Kolom AU (PEMERINGKATAN BUM DESA BERSAMA)
@@ -481,7 +500,7 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
     const cntPemulaBersamaHex = provRows.filter(r => r.pemeringkatanBumDesaBersama.toUpperCase().includes("PEMULA") || r.pemeringkatanBumDesaBersama.toUpperCase() === "RINTISAN").length;
     const cntBerkembangBersamaHex = provRows.filter(r => r.pemeringkatanBumDesaBersama.toUpperCase().includes("BERKEMBANG")).length;
     const cntMajuValueBersamaHex = provRows.filter(r => r.pemeringkatanBumDesaBersama.toUpperCase().includes("MAJU")).length;
-    const totalBumDesaBersamaCount = cntPerintisBersamaHex + cntPemulaBersamaHex + cntBerkembangBersamaHex + cntMajuValueBersamaHex;
+    const totalBumDesaBersamaCount = provRows.filter(r => r.pemeringkatanBumDesaBersama.trim() !== "" && r.pemeringkatanBumDesaBersama !== "-").length;
 
     let bStatus = {
       aktif: cntBerkembangHex + cntMajuValueHex,
@@ -539,7 +558,7 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
     }
 
     // Averages aspects (S-Y details, average rating of Column Z)
-    const validBumRows = provRows.filter(r => r.nilaiPemeringkatanBumDesa > 0.001);
+    const validBumRows = provRows.filter(r => r.nilaiPemeringkatanBumDesa > 0.1);
     const avgAspekKelembagaan = validBumRows.length > 0 ? validBumRows.reduce((sum, r) => sum + r.aspekKelembagaan, 0) / validBumRows.length : 0.65;
     const avgAspekManajemen = validBumRows.length > 0 ? validBumRows.reduce((sum, r) => sum + r.aspekManajemen, 0) / validBumRows.length : 0.65;
     const avgAspekUsaha = validBumRows.length > 0 ? validBumRows.reduce((sum, r) => sum + r.aspekUsaha, 0) / validBumRows.length : 0.65;
@@ -550,7 +569,7 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
     const avgNilaiPemeringkatanBumDesa = validBumRows.length > 0 ? validBumRows.reduce((sum, r) => sum + r.nilaiPemeringkatanBumDesa, 0) / validBumRows.length : 0.648;
 
     // BUM Desa Bersama aspects averages (AM-AS details, average rating of Column AT)
-    const validBumDesmaRows = provRows.filter(r => r.nilaiPemeringkatanBumDesaBersama > 0.001);
+    const validBumDesmaRows = provRows.filter(r => r.nilaiPemeringkatanBumDesaBersama > 0.1);
     const avgAspekKelembagaanBersama = validBumDesmaRows.length > 0 ? validBumDesmaRows.reduce((sum, r) => sum + r.aspekKelembagaanBersama, 0) / validBumDesmaRows.length : 0.648;
     const avgAspekManajemenBersama = validBumDesmaRows.length > 0 ? validBumDesmaRows.reduce((sum, r) => sum + r.aspekManajemenBersama, 0) / validBumDesmaRows.length : 0.648;
     const avgAspekUsahaBersama = validBumDesmaRows.length > 0 ? validBumDesmaRows.reduce((sum, r) => sum + r.aspekUsahaBersama, 0) / validBumDesmaRows.length : 0.648;
@@ -560,23 +579,16 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
     const avgAspekManfaatBersama = validBumDesmaRows.length > 0 ? validBumDesmaRows.reduce((sum, r) => sum + r.aspekManfaatBersama, 0) / validBumDesmaRows.length : 0.648;
     const avgNilaiPemeringkatanBumDesaBersama = validBumDesmaRows.length > 0 ? validBumDesmaRows.reduce((sum, r) => sum + r.nilaiPemeringkatanBumDesaBersama, 0) / validBumDesmaRows.length : 0.648;
 
-    // Bagi hasil sum (AB-AE, SUM total, handled using scalable millions/billions check)
-    const getScaledSum = (sumRaw: number) => {
-      if (sumRaw > 100000) {
-        return parseFloat((sumRaw / 1000000000).toFixed(3));
-      }
-      return parseFloat(sumRaw.toFixed(1));
-    };
-
-    const sumPADes22 = getScaledSum(provRows.reduce((sum, r) => sum + r.bagiHasil2022, 0));
-    const sumPADes23 = getScaledSum(provRows.reduce((sum, r) => sum + r.bagiHasil2023, 0));
-    const sumPADes24 = getScaledSum(provRows.reduce((sum, r) => sum + r.bagiHasil2024, 0));
-    const sumPADes25 = getScaledSum(provRows.reduce((sum, r) => sum + r.bagiHasil2025, 0));
+    // Bagi hasil sum (AB-AE, SUM total, without scaling down to billions)
+    const sumPADes22 = provRows.reduce((sum, r) => sum + r.bagiHasil2022, 0);
+    const sumPADes23 = provRows.reduce((sum, r) => sum + r.bagiHasil2023, 0);
+    const sumPADes24 = provRows.reduce((sum, r) => sum + r.bagiHasil2024, 0);
+    const sumPADes25 = provRows.reduce((sum, r) => sum + r.bagiHasil2025, 0);
 
     // NIB: Distinct Count on Column AF
     const uniqueNibs = new Set(provRows.map(r => r.nib).filter(isValidNib));
     const finalNIBCount = uniqueNibs.size;
-    const finalNIBPercentage = totalBum > 0 ? parseFloat(((finalNIBCount / totalBum) * 100).toFixed(2)) : 0;
+    const finalNIBPercentage = finalTotalBum > 0 ? parseFloat(((finalNIBCount / finalTotalBum) * 100).toFixed(2)) : 0;
 
     return {
       id: pid,
@@ -585,9 +597,9 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
       kecamatanCount: uniqueKecs.size || 1,
       desaCount: uniqueDesas.size || 100,
       indeksDesa: {
-        "2022": parseFloat((avgScore - 5.0).toFixed(8)),
-        "2023": parseFloat((avgScore - 3.0).toFixed(8)),
-        "2024": parseFloat((avgScore - 1.0).toFixed(8)),
+        "2022": 0,
+        "2023": 0,
+        "2024": 0,
         "2025": parseFloat(avgScore.toFixed(8))
       },
       idDimensions: {
@@ -600,7 +612,7 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
           tataKelola: parseFloat(avgTataKelola.toFixed(8))
         }
       },
-      bumDesaCount: totalBum,
+      bumDesaCount: finalTotalBum,
       bumDesaStatus: {
         "2025": bStatus
       },
@@ -659,14 +671,12 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
   const uniqueNationalKecs = new Set(rawRows.map(r => r.idKec).filter(Boolean)).size;
   const uniqueNationalDesas = new Set(rawRows.map(r => r.kodeDesa).filter(Boolean)).size;
 
-  const nationalBumDesaNames = new Set(rawRows.map(r => r.bumDesaName).filter(isValidBumName));
-  const nationalBumDesaCount = nationalBumDesaNames.size;
+  const nationalBumDesaCount = rawRows.filter(r => r.pemeringkatanBumDesa.trim() !== "" && r.pemeringkatanBumDesa !== "-").length;
 
-  const nationalBumDesaBersamaNames = new Set(rawRows.map(r => r.bumDesaBersamaName).filter(isValidBumName));
-  const nationalBumDesaBersamaCount = nationalBumDesaBersamaNames.size;
+  const nationalBumDesaBersamaCount = rawRows.filter(r => r.pemeringkatanBumDesaBersama.trim() !== "" && r.pemeringkatanBumDesaBersama !== "-").length;
 
-  const nationalValidBumRows = rawRows.filter(r => r.nilaiPemeringkatanBumDesa > 0.001);
-  const nationalValidBumDesmaRows = rawRows.filter(r => r.nilaiPemeringkatanBumDesaBersama > 0.001);
+  const nationalValidBumRows = rawRows.filter(r => r.nilaiPemeringkatanBumDesa > 0.1);
+  const nationalValidBumDesmaRows = rawRows.filter(r => r.nilaiPemeringkatanBumDesaBersama > 0.1);
 
   const nationalBibs = new Set(rawRows.map(r => r.nib).filter(isValidNib));
   const totalNIBCount = nationalBibs.size;
@@ -709,9 +719,9 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
     kecamatanCount: uniqueNationalKecs || 7277,
     desaCount: uniqueNationalDesas || 75266,
     indeksDesa: {
-      "2022": parseFloat((avgIDAll - 5.0).toFixed(8)),
-      "2023": parseFloat((avgIDAll - 3.0).toFixed(8)),
-      "2024": parseFloat((avgIDAll - 1.0).toFixed(8)),
+      "2022": 0,
+      "2023": 0,
+      "2024": 0,
       "2025": parseFloat(avgIDAll.toFixed(8))
     },
     idDimensions: {
@@ -853,7 +863,8 @@ export function getFilteredSheetsData(
   const cntPemulaHex = scopeRows.filter(r => r.pemeringkatanBumDesa.toUpperCase().includes("PEMULA") || r.pemeringkatanBumDesa.toUpperCase() === "RINTISAN").length;
   const cntBerkembangHex = scopeRows.filter(r => r.pemeringkatanBumDesa.toUpperCase().includes("BERKEMBANG")).length;
   const cntMajuValueHex = scopeRows.filter(r => r.pemeringkatanBumDesa.toUpperCase().includes("MAJU")).length;
-  const bumCount = cntPerintisHex + cntPemulaHex + cntBerkembangHex + cntMajuValueHex;
+  const finalTotalBum = scopeRows.filter(r => r.pemeringkatanBumDesa.trim() !== "" && r.pemeringkatanBumDesa !== "-").length;
+  const bumCount = finalTotalBum;
 
   // BUM Desa Bersama Classifications Status Breakdown
   // dihitung dari distinct / frequency pada Kolom AU (PEMERINGKATAN BUM DESA BERSAMA)
@@ -861,7 +872,7 @@ export function getFilteredSheetsData(
   const cntPemulaBersamaHex = scopeRows.filter(r => r.pemeringkatanBumDesaBersama.toUpperCase().includes("PEMULA") || r.pemeringkatanBumDesaBersama.toUpperCase() === "RINTISAN").length;
   const cntBerkembangBersamaHex = scopeRows.filter(r => r.pemeringkatanBumDesaBersama.toUpperCase().includes("BERKEMBANG")).length;
   const cntMajuValueBersamaHex = scopeRows.filter(r => r.pemeringkatanBumDesaBersama.toUpperCase().includes("MAJU")).length;
-  const bumDesaBersamaCount = cntPerintisBersamaHex + cntPemulaBersamaHex + cntBerkembangBersamaHex + cntMajuValueBersamaHex;
+  const bumDesaBersamaCount = scopeRows.filter(r => r.pemeringkatanBumDesaBersama.trim() !== "" && r.pemeringkatanBumDesaBersama !== "-").length;
 
   let bStatus = {
     aktif: cntBerkembangHex + cntMajuValueHex,
@@ -918,7 +929,7 @@ export function getFilteredSheetsData(
   }
 
   // Recalculate aspect averages for BUM Desa
-  const validBumRows = scopeRows.filter(r => r.nilaiPemeringkatanBumDesa > 0.001);
+  const validBumRows = scopeRows.filter(r => r.nilaiPemeringkatanBumDesa > 0.1);
   const avgAspekKelembagaan = validBumRows.length > 0 ? validBumRows.reduce((sum, r) => sum + r.aspekKelembagaan, 0) / validBumRows.length : 0.65;
   const avgAspekManajemen = validBumRows.length > 0 ? validBumRows.reduce((sum, r) => sum + r.aspekManajemen, 0) / validBumRows.length : 0.65;
   const avgAspekUsaha = validBumRows.length > 0 ? validBumRows.reduce((sum, r) => sum + r.aspekUsaha, 0) / validBumRows.length : 0.65;
@@ -929,7 +940,7 @@ export function getFilteredSheetsData(
   const avgNilaiPemeringkatanBumDesa = validBumRows.length > 0 ? validBumRows.reduce((sum, r) => sum + r.nilaiPemeringkatanBumDesa, 0) / validBumRows.length : 0.648;
 
   // Recalculate aspects averages for BUM Desa Bersama
-  const validBumDesmaRows = scopeRows.filter(r => r.nilaiPemeringkatanBumDesaBersama > 0.001);
+  const validBumDesmaRows = scopeRows.filter(r => r.nilaiPemeringkatanBumDesaBersama > 0.1);
   const avgAspekKelembagaanBersama = validBumDesmaRows.length > 0 ? validBumDesmaRows.reduce((sum, r) => sum + r.aspekKelembagaanBersama, 0) / validBumDesmaRows.length : 0.648;
   const avgAspekManajemenBersama = validBumDesmaRows.length > 0 ? validBumDesmaRows.reduce((sum, r) => sum + r.aspekManajemenBersama, 0) / validBumDesmaRows.length : 0.648;
   const avgAspekUsahaBersama = validBumDesmaRows.length > 0 ? validBumDesmaRows.reduce((sum, r) => sum + r.aspekUsahaBersama, 0) / validBumDesmaRows.length : 0.648;
@@ -959,9 +970,9 @@ export function getFilteredSheetsData(
     kecamatanCount: uniqueKecs.size || 1,
     desaCount: uniqueDesas.size || 1,
     indeksDesa: {
-      "2022": parseFloat((avgScore - 5.0).toFixed(8)),
-      "2023": parseFloat((avgScore - 3.0).toFixed(8)),
-      "2024": parseFloat((avgScore - 1.0).toFixed(8)),
+      "2022": 0,
+      "2023": 0,
+      "2024": 0,
       "2025": parseFloat(avgScore.toFixed(8))
     },
     idDimensions: {
@@ -991,10 +1002,10 @@ export function getFilteredSheetsData(
       }
     },
     bagiHasilPADes: {
-      "2022": getScaledSum(sumPADes22),
-      "2023": getScaledSum(sumPADes23),
-      "2024": getScaledSum(sumPADes24),
-      "2025": getScaledSum(sumPADes25)
+      "2022": sumPADes22,
+      "2023": sumPADes23,
+      "2024": sumPADes24,
+      "2025": sumPADes25
     },
     nib: {
       count: finalNIBCount,

@@ -44,7 +44,7 @@ export default function TabPADes({
 
           <div className="overflow-x-auto">
             <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest block mb-2 leading-none">
-              Histori Finansial PADes Berkelanjutan (Miliar Rupiah)
+              Histori Finansial PADes Berkelanjutan
             </span>
             <table className="w-full text-left font-sans text-xs border-collapse">
               <thead>
@@ -59,6 +59,13 @@ export default function TabPADes({
               <tbody className="divide-y divide-slate-100 font-medium text-slate-650">
                 {provinceDataList.map((prov) => {
                   const h = prov.bagiHasilPADes;
+                  
+                  const formatCmp = (val: number) => {
+                    if (val >= 1e9) return (val / 1e9).toFixed(1).replace(".", ",") + " M";
+                    if (val >= 1e6) return (val / 1e6).toFixed(1).replace(".", ",") + " Jt";
+                    return val.toLocaleString("id-ID");
+                  };
+
                   return (
                     <tr
                       key={prov.id}
@@ -67,16 +74,16 @@ export default function TabPADes({
                     >
                       <td className="py-2.5 font-bold text-[#0c4a9f]">{prov.name}</td>
                       <td className="py-2.5 text-center font-mono">
-                        Rp {h["2022"].toFixed(1).replace(".", ",")} M
+                        Rp {formatCmp(h["2022"])}
                       </td>
                       <td className="py-2.5 text-center font-mono">
-                        Rp {h["2023"].toFixed(1).replace(".", ",")} M
+                        Rp {formatCmp(h["2023"])}
                       </td>
                       <td className="py-2.5 text-center font-mono">
-                        Rp {h["2024"].toFixed(1).replace(".", ",")} M
+                        Rp {formatCmp(h["2024"])}
                       </td>
                       <td className="py-2.5 text-right font-mono font-bold text-slate-800">
-                        Rp {h["2025"].toFixed(1).replace(".", ",")} M
+                        Rp {formatCmp(h["2025"])}
                       </td>
                     </tr>
                   );

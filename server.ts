@@ -34,7 +34,7 @@ async function startServer() {
           const gidParam = gidMatch ? `&gid=${gidMatch[1]}` : "";
           
           if (useGviz) {
-            return `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv${gidParam}`;
+            return `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&sheet=final`;
           }
           return `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv${gidParam}`;
         }
@@ -45,30 +45,30 @@ async function startServer() {
       let success = false;
       let lastError = "";
 
-      // Strategy 1: Direct Export Link
+      // Strategy 1: Visualization API (Supports 'sheet' name querying)
       try {
-        const primaryUrl = getCSVExportUrl(sheetUrl, false);
+        const primaryUrl = getCSVExportUrl(sheetUrl, true);
         const response = await fetch(primaryUrl);
         if (response.ok) {
           text = await response.text();
           success = true;
         } else {
-          lastError = `Export Link HTTP ${response.status}`;
+          lastError = `Visualization API HTTP ${response.status}`;
         }
       } catch (e: any) {
-        lastError = e?.message || String(e);
+        lastError = `Visualization API error: ${e?.message || String(e)}`;
       }
 
-      // Strategy 2: Visualization API fallback
+      // Strategy 2: Direct Export Link (Fallback)
       if (!success) {
         try {
-          const fallbackUrl = getCSVExportUrl(sheetUrl, true);
+          const fallbackUrl = getCSVExportUrl(sheetUrl, false);
           const response = await fetch(fallbackUrl);
           if (response.ok) {
             text = await response.text();
             success = true;
           } else {
-            lastError = `Visualization API HTTP ${response.status}`;
+            lastError = `Export Link HTTP ${response.status}`;
           }
         } catch (e: any) {
           lastError = `Fallback error: ${e?.message || String(e)}`;

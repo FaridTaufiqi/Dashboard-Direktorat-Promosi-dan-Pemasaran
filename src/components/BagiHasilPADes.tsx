@@ -16,10 +16,17 @@ export default function BagiHasilPADes({ data, tahun }: BagiHasilPADesProps) {
   const years = ["2022", "2023", "2024", "2025"];
   const values = years.map((y) => bagiHasil[y] || 0);
 
+  // Extracted dynamically format
+  const formatAuto = (val: number) => {
+    if (val >= 1000000000) return (val / 1000000000).toFixed(1).replace(".", ",") + "M";
+    if (val >= 1000000) return (val / 1000000).toFixed(1).replace(".", ",") + "Jt";
+    return formatIndoNumber(Math.round(val));
+  };
+
   // Math for SVG Chart
   const svgWidth = 330;
   const svgHeight = 160;
-  const paddingLeft = 40;
+  const paddingLeft = 45;
   const paddingRight = 20;
   const paddingTop = 25;
   const paddingBottom = 25;
@@ -73,7 +80,7 @@ export default function BagiHasilPADes({ data, tahun }: BagiHasilPADesProps) {
           </div>
         </div>
         <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
-          Kontribusi laba bersih BUM Desa (Miliar Rp)
+          Kontribusi laba bersih BUM Desa (Rp)
         </p>
       </div>
 
@@ -115,7 +122,7 @@ export default function BagiHasilPADes({ data, tahun }: BagiHasilPADesProps) {
                 className="fill-slate-400 font-bold font-mono text-left"
                 style={{ fontSize: "8px", textAnchor: "end" }}
               >
-                {Math.round(line.val)}
+                {formatAuto(line.val)}
               </text>
             </g>
           ))}
@@ -211,7 +218,7 @@ export default function BagiHasilPADes({ data, tahun }: BagiHasilPADesProps) {
                   textAnchor="middle"
                   className={`font-mono font-extrabold ${isTargetYear ? "fill-blue-700 text-[10px]" : "fill-slate-600 text-[8px]"}`}
                 >
-                  {values[i].toFixed(1).replace(".", ",")}
+                  {formatAuto(values[i])}
                 </text>
               </g>
             );
@@ -238,16 +245,16 @@ export default function BagiHasilPADes({ data, tahun }: BagiHasilPADesProps) {
 
         {/* Chart Legend info overlay box */}
         {activePointIdx !== null && (
-          <div className="absolute top-1 right-2 bg-slate-900 text-white rounded-lg px-2 py-1 text-[10px] shadow-md border border-slate-700 pointer-events-none font-medium flex items-center gap-1.5 animate-fade-in">
+          <div className="absolute top-1 right-2 bg-slate-900 text-white rounded-lg px-2 py-1 text-[10px] shadow-md border border-slate-700 pointer-events-none font-medium flex items-center gap-1.5 animate-fade-in z-20">
             <Coins className="w-3.5 h-3.5 text-amber-300" />
             <span>Tahun {years[activePointIdx]}:</span>
-            <span className="font-extrabold text-amber-300 font-mono">Rp {values[activePointIdx].toFixed(1).replace(".", ",")} Miliar</span>
+            <span className="font-extrabold text-amber-300 font-mono">Rp {formatIndoNumber(Math.round(values[activePointIdx]))}</span>
           </div>
         )}
       </div>
 
       {/* Target Status indicators */}
-      <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+      <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs mt-4">
         <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-blue-500 block" />2022</span>
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500 block" />2023</span>
@@ -256,7 +263,7 @@ export default function BagiHasilPADes({ data, tahun }: BagiHasilPADesProps) {
         </div>
 
         <div className="text-right text-[10px] font-bold text-slate-400">
-          UNIT: MILIAR RUPIAH (IDR)
+          NILAI PADes AKTUAL
         </div>
       </div>
     </div>

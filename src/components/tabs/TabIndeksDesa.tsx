@@ -1,6 +1,6 @@
 import React from "react";
 import IndeksDesaRadar from "../IndeksDesaRadar";
-import { formatIndoDecimal } from "../KPICards";
+import { formatIndoPrecise } from "../KPICards";
 import { provinceDataList } from "../../data/mockData";
 import { DashboardFilters } from "../../types";
 
@@ -36,7 +36,7 @@ export default function TabIndeksDesa({
               Apa itu Indeks Desa?
             </h4>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Indeks Desa merupakan instrumen pengukuran komposit yang mengukur kapasitas desa untuk bertransisi menuju kemandirian ekonomi, sosial, dan ketahanan ekologis. Indeks dibentuk berdasarkan rata-rata tertimbang dari 6 sub-indikator utama. Nilai skala berkisar antara <strong>0,000 sampai 1,000</strong>.
+              Indeks Desa merupakan instrumen pengukuran komposit yang mengukur kapasitas desa untuk bertransisi menuju kemandirian ekonomi, sosial, dan ketahanan ekologis. Indeks dibentuk berdasarkan rata-rata tertimbang dari 6 sub-indikator utama. Nilai skala berkisar antara <strong>0 sampai 100</strong>.
             </p>
           </div>
 
@@ -65,22 +65,22 @@ export default function TabIndeksDesa({
                     >
                       <td className="py-2.5 font-bold text-[#0c4a9f]">{prov.name}</td>
                       <td className="py-2.5 text-center font-mono">
-                        {formatIndoDecimal(d?.sosial || 0.65)}
+                        {formatIndoPrecise(d?.sosial || 65)}
                       </td>
                       <td className="py-2.5 text-center font-mono">
-                        {formatIndoDecimal(d?.ekonomi || 0.65)}
+                        {formatIndoPrecise(d?.ekonomi || 65)}
                       </td>
                       <td className="py-2.5 text-center font-mono">
-                        {formatIndoDecimal(d?.layananDasar || 0.65)}
+                        {formatIndoPrecise(d?.layananDasar || 65)}
                       </td>
                       <td className="py-2.5 text-center font-mono">
-                        {formatIndoDecimal(d?.aksesibilitas || 0.65)}
+                        {formatIndoPrecise(d?.aksesibilitas || 65)}
                       </td>
                       <td className="py-2.5 text-center font-mono">
-                        {formatIndoDecimal(d?.tataKelola || 0.65)}
+                        {formatIndoPrecise(d?.tataKelola || 65)}
                       </td>
                       <td className="py-2.5 text-right font-mono font-bold text-slate-800">
-                        {formatIndoDecimal(prov.indeksDesa[filters.tahun] || 0.65)}
+                        {formatIndoPrecise(prov.indeksDesa[filters.tahun] || 65)}
                       </td>
                     </tr>
                   );

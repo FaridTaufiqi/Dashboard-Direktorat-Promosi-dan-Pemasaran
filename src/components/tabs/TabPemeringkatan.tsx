@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PemeringkatanBUMDesa from "../PemeringkatanBUMDesa";
 import { formatIndoDecimal } from "../KPICards";
 import { provinceDataList } from "../../data/mockData";
@@ -15,6 +15,8 @@ export default function TabPemeringkatan({
   activeData,
   handleSelectProvince,
 }: TabPemeringkatanProps) {
+  const [tableIsBersama, setTableIsBersama] = useState(false);
+
   return (
     <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm space-y-6">
       <div>
@@ -51,14 +53,36 @@ export default function TabPemeringkatan({
                 <strong>Usaha</strong>: Kelayakan bisnis, perputaran produk and kontribusi pasar terpadu.
               </li>
               <li>
-                <strong>Kemitraan</strong>: Kerja sama institusional dengan pihak ketiga or perbankan
-                swasta.
+                <strong>Kemitraan</strong>: Kerja sama institusional dengan pihak ketiga or perbankan swasta.
               </li>
             </ul>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left font-sans text-xs border-collapse">
+            <div className="flex justify-between items-end mb-2">
+              <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest block leading-none">
+                Data Provinsi: {tableIsBersama ? "BUM DESA BERSAMA" : "BUM DESA"}
+              </span>
+              <div className="flex bg-slate-100 p-0.5 rounded-lg shrink-0 border border-slate-200">
+                <button
+                  onClick={() => setTableIsBersama(false)}
+                  className={`px-3 py-1 text-[9px] font-extrabold rounded-md transition-all ${
+                    !tableIsBersama ? "bg-white text-blue-700 shadow-xs" : "text-slate-500 hover:text-slate-800"
+                  }`}
+                >
+                  BUM DESA
+                </button>
+                <button
+                  onClick={() => setTableIsBersama(true)}
+                  className={`px-3 py-1 text-[9px] font-extrabold rounded-md transition-all ${
+                    tableIsBersama ? "bg-white text-blue-700 shadow-xs" : "text-slate-500 hover:text-slate-800"
+                  }`}
+                >
+                  BERSAMA
+                </button>
+              </div>
+            </div>
+            <table className="w-full text-left font-sans text-xs border-collapse mt-2">
               <thead>
                 <tr className="border-b border-slate-200 text-slate-400 font-bold text-[10px] uppercase">
                   <th className="pb-2">Provinsi</th>
@@ -66,19 +90,28 @@ export default function TabPemeringkatan({
                   <th className="pb-2 text-center">Manajemen</th>
                   <th className="pb-2 text-center">Kemitraan</th>
                   <th className="pb-2 text-center">Manfaat</th>
-                  <th className="pb-2 text-right">Skor Rata-rata</th>
+                  <th className="pb-2 text-right">Skor Rekap</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium text-slate-650">
                 {provinceDataList.map((prov) => {
-                  const p = prov.bumDesaPemeringkatan[filters.tahun] ||
+                  const p = !tableIsBersama ? (prov.bumDesaPemeringkatan[filters.tahun] ||
                     prov.bumDesaPemeringkatan["2025"] || {
                       kelembagaan: 0.6,
                       manajemen: 0.6,
                       kemitraan: 0.6,
                       manfaat: 0.6,
+                      nilaiPemeringkatan: 0.6
+                    }) : {
+                      kelembagaan: prov.bumDesaBersama?.kelembagaan ?? 0.6,
+                      manajemen: prov.bumDesaBersama?.manajemen ?? 0.6,
+                      kemitraan: prov.bumDesaBersama?.kemitraan ?? 0.6,
+                      manfaat: prov.bumDesaBersama?.manfaat ?? 0.6,
+                      nilaiPemeringkatan: prov.bumDesaBersama?.pemeringkatanNilai ?? 0.6
                     };
-                  const avg = (p.kelembagaan + p.manajemen + p.kemitraan + p.manfaat) / 4;
+                  
+                  const avg = (p as any).nilaiPemeringkatan ?? ((p.kelembagaan + p.manajemen + p.kemitraan + p.manfaat) / 4);
+                  
                   return (
                     <tr
                       key={prov.id}

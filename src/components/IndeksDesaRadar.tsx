@@ -52,19 +52,31 @@ export default function IndeksDesaRadar({ data, tahun }: IndeksDesaRadarProps) {
   const center = 110;
   const maxRadius = 70; // Slightly reduced to give breathing space for labels within container
 
-  // Function to get x,y for a specific dimension index (0 to 5) and magnitude (0 to 1)
-  const getPoint = (index: number, value: number) => {
+  // Function to get x,y for a specific dimension index (0 to 5) and magnitude (0 to 1 scale)
+  const getPoint = (index: number, rawValue: number) => {
+    // Values are in tens (e.g. 70.5), so we scale by / 100 for SVG radius fraction
+    const scaledVal = rawValue > 1.2 ? rawValue / 100 : rawValue;
     const angle = (index * 60 - 90) * (Math.PI / 180); // Start top-center (-90 deg)
-    const x = center + maxRadius * value * Math.cos(angle);
-    const y = center + maxRadius * value * Math.sin(angle);
+    const x = center + maxRadius * scaledVal * Math.cos(angle);
+    const y = center + maxRadius * scaledVal * Math.sin(angle);
     return { x, y };
   };
 
-  // 1. Concentric grid layers (for values 0.25, 0.5, 0.75, 1.0)
-  const gridLevels = [0.25, 0.5, 0.75, 1.0];
-  const gridPaths = gridLevels.map((level) => {
+  // 1. Concentric grid layers (for values 25, 50, 75, 100 to map to 0.25, 0.5, 0.75, 1.0)
+  const gridLevels = [25, 50, 75, 100];
+  const scaleFractionLevels = [0.25, 0.5, 0.75, 1.0];
+  const gridPaths = scaleFractionLevels.map((level) => {
     const points = Array.from({ length: 6 }).map((_, i) => {
-      const p = getPoint(i, level);
+      // Pass the unscaled "level" as if it was 1.0 (so passing frac directly here)
+      // wait, `getPoint` expects the rawValue. So we should pass 25, 50 etc to `getPoint`
+      return "";
+    }); // Just remap directly
+    return "";
+  });
+  
+  const finalGridPaths = gridLevels.map((rawLevel) => {
+    const points = Array.from({ length: 6 }).map((_, i) => {
+      const p = getPoint(i, rawLevel);
       return `${p.x},${p.y}`;
     });
     return `M ${points.join(" L ")} Z`;
@@ -73,6 +85,7 @@ export default function IndeksDesaRadar({ data, tahun }: IndeksDesaRadarProps) {
   // 2. Data shape paths
   const dataPoints = dimensionsList.map((d, i) => getPoint(i, d.val));
   const dataPathD = `M ${dataPoints.map((p) => `${p.x},${p.y}`).join(" L ")} Z`;
+
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col justify-between h-full">
@@ -92,7 +105,7 @@ export default function IndeksDesaRadar({ data, tahun }: IndeksDesaRadarProps) {
         <div className="flex justify-center items-center w-[220px] h-[190px] relative select-none">
           <svg width={width} height={height} className="overflow-visible">
             {/* Grid concentric shapes */}
-            {gridPaths.map((path, idx) => (
+            {finalGridPaths.map((path, idx) => (
               <path
                 key={`grid-${idx}`}
                 d={path}
@@ -115,14 +128,14 @@ export default function IndeksDesaRadar({ data, tahun }: IndeksDesaRadarProps) {
                   className="fill-slate-400 font-bold"
                   style={{ fontSize: "7px", fontFamily: "monospace" }}
                 >
-                  {level.toFixed(2).replace(".", ",")}
+                  {level.toString()}
                 </text>
               );
             })}
 
             {/* Radial spoke lines */}
             {Array.from({ length: 6 }).map((_, i) => {
-              const outerPoint = getPoint(i, 1.0);
+              const outerPoint = getPoint(i, 100.0);
               return (
                 <line
                   key={`spoke-${i}`}

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Trophy, Star, ShieldCheck } from "lucide-react";
 import { ProvinceData } from "../types";
-import { formatIndoDecimal } from "./KPICards";
+import { formatIndoPrecise } from "./KPICards";
 
 interface PemeringkatanBUMDesaProps {
   data: ProvinceData;
@@ -14,22 +14,22 @@ export default function PemeringkatanBUMDesa({ data, tahun }: PemeringkatanBUMDe
   // Extract aspects for active year reflecting selection
   const aspects = !isBersama 
     ? (data.bumDesaPemeringkatan[tahun] || data.bumDesaPemeringkatan["2025"] || {
-        kelembagaan: 0.721,
-        manajemen: 0.671,
-        usaha: 0.688,
-        kemitraan: 0.620,
-        asetModal: 0.658,
-        administrasi: 0.642,
-        manfaat: 0.674,
+        kelembagaan: 72.1,
+        manajemen: 67.1,
+        usaha: 68.8,
+        kemitraan: 62.0,
+        asetModal: 65.8,
+        administrasi: 64.2,
+        manfaat: 67.4,
       })
     : {
-        kelembagaan: data.bumDesaBersama.kelembagaan ?? 0.648,
-        manajemen: data.bumDesaBersama.manajemen ?? 0.648,
-        usaha: data.bumDesaBersama.usaha ?? 0.648,
-        kemitraan: data.bumDesaBersama.kemitraan ?? 0.648,
-        asetModal: data.bumDesaBersama.asetModal ?? 0.648,
-        administrasi: data.bumDesaBersama.administrasi ?? 0.648,
-        manfaat: data.bumDesaBersama.manfaat ?? 0.648,
+        kelembagaan: data.bumDesaBersama.kelembagaan ?? 64.8,
+        manajemen: data.bumDesaBersama.manajemen ?? 64.8,
+        usaha: data.bumDesaBersama.usaha ?? 64.8,
+        kemitraan: data.bumDesaBersama.kemitraan ?? 64.8,
+        asetModal: data.bumDesaBersama.asetModal ?? 64.8,
+        administrasi: data.bumDesaBersama.administrasi ?? 64.8,
+        manfaat: data.bumDesaBersama.manfaat ?? 64.8,
       };
 
   const list = [
@@ -58,17 +58,17 @@ export default function PemeringkatanBUMDesa({ data, tahun }: PemeringkatanBUMDe
   let iconColor = "text-emerald-500";
   let badgeText = isBersama ? "BUM Desa Bersama Kelas B" : "BUM Desa Kelas B";
 
-  if (averagePoint >= 0.75) {
+  if (averagePoint >= 75) {
     grade = "Sangat Baik";
     gradeColor = "text-blue-700 bg-blue-50 border-blue-100";
     iconColor = "text-blue-500 animate-bounce";
     badgeText = isBersama ? "BUM Desa Bersama Unggul (Kelas A)" : "BUM Desa Unggul (Kelas A)";
-  } else if (averagePoint >= 0.60) {
+  } else if (averagePoint >= 60) {
     grade = "Baik";
     gradeColor = "text-[#059669] bg-emerald-50 border-emerald-100";
     iconColor = "text-amber-500";
     badgeText = isBersama ? "BUM Desa Bersama Sehat (Kelas B)" : "BUM Desa Sehat (Kelas B)";
-  } else if (averagePoint >= 0.50) {
+  } else if (averagePoint >= 50) {
     grade = "Cukup";
     gradeColor = "text-amber-700 bg-amber-50 border-amber-100";
     iconColor = "text-amber-600";
@@ -119,12 +119,12 @@ export default function PemeringkatanBUMDesa({ data, tahun }: PemeringkatanBUMDe
       {/* Aspects Bar Charts - Full Width for ample breathing room */}
       <div className="space-y-2.5">
         {list.map((item) => {
-          const pct = item.val * 100;
+          const pct = Math.min(item.val, 100);
           return (
             <div key={item.key} className="w-full">
               <div className="flex justify-between items-center text-[10px] text-slate-500 font-bold mb-1">
                 <span className="truncate pr-2">{item.label}</span>
-                <span className="font-mono text-slate-700 shrink-0">{formatIndoDecimal(item.val)}</span>
+                <span className="font-mono text-slate-700 shrink-0">{formatIndoPrecise(item.val)}</span>
               </div>
               {/* Visual score bar */}
               <div className="bg-slate-100 h-2 rounded-full overflow-hidden">
@@ -162,7 +162,7 @@ export default function PemeringkatanBUMDesa({ data, tahun }: PemeringkatanBUMDe
             SKOR AKHIR
           </span>
           <span className="text-xl font-mono font-black text-blue-700 block leading-none mb-1">
-            {formatIndoDecimal(averagePoint)}
+            {formatIndoPrecise(averagePoint)}
           </span>
           <div className={`py-0.5 px-2.5 rounded-full border text-[9px] font-black inline-block uppercase leading-none shadow-2xs ${gradeColor}`}>
             {grade}
