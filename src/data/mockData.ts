@@ -60,11 +60,20 @@ export const provinceDataList: ProvinceData[] = provincesMeta.map(pm => {
     "2022": parseFloat((idBase - 0.052).toFixed(3)),
     "2023": parseFloat((idBase - 0.030).toFixed(3)),
     "2024": parseFloat((idBase - 0.015).toFixed(3)),
-    "2025": idBase
+    "2025": idBase,
+    "2026": idBase
   };
 
   // Create dimensions
   const idDimensions: { [year: string]: { layananDasar: number, sosial: number, ekonomi: number, lingkungan: number, aksesibilitas: number, tataKelola: number } } = {
+    "2026": {
+      layananDasar: parseFloat((idBase + 0.045).toFixed(3)),
+      sosial: parseFloat((idBase + 0.022).toFixed(3)),
+      ekonomi: parseFloat((idBase + 0.012).toFixed(3)),
+      lingkungan: parseFloat((idBase - 0.024).toFixed(3)),
+      aksesibilitas: parseFloat((idBase - 0.035).toFixed(3)),
+      tataKelola: parseFloat((idBase + 0.025).toFixed(3))
+    },
     "2025": {
       layananDasar: parseFloat((idBase + 0.045).toFixed(3)),
       sosial: parseFloat((idBase + 0.022).toFixed(3)),
@@ -104,6 +113,11 @@ export const provinceDataList: ProvinceData[] = provincesMeta.map(pm => {
 
   // Status
   const bumDesaStatus: { [year: string]: { aktif: number, tidakAktif: number, dalamPengembangan: number } } = {
+    "2026": {
+      aktif: Math.round(bumDesaCount * 0.72),
+      tidakAktif: Math.round(bumDesaCount * 0.18),
+      dalamPengembangan: Math.round(bumDesaCount * 0.10)
+    },
     "2025": {
       aktif: Math.round(bumDesaCount * 0.72),
       tidakAktif: Math.round(bumDesaCount * 0.18),
@@ -128,6 +142,15 @@ export const provinceDataList: ProvinceData[] = provincesMeta.map(pm => {
 
   // Dimensions
   const bumDesaPemeringkatan: { [year: string]: { kelembagaan: number, manajemen: number, usaha: number, kemitraan: number, asetModal: number, administrasi: number, manfaat: number } } = {
+    "2026": {
+      kelembagaan: parseFloat((0.72 + (seed % 8) / 100).toFixed(3)),
+      manajemen: parseFloat((0.67 + (seed % 10) / 100).toFixed(3)),
+      usaha: parseFloat((0.69 + (seed % 8) / 100).toFixed(3)),
+      kemitraan: parseFloat((0.61 + (seed % 12) / 100).toFixed(3)),
+      asetModal: parseFloat((0.65 + (seed % 9) / 100).toFixed(3)),
+      administrasi: parseFloat((0.63 + (seed % 11) / 100).toFixed(3)),
+      manfaat: parseFloat((0.67 + (seed % 8) / 100).toFixed(3))
+    },
     "2025": {
       kelembagaan: parseFloat((0.72 + (seed % 8) / 100).toFixed(3)),
       manajemen: parseFloat((0.67 + (seed % 10) / 100).toFixed(3)),
@@ -172,7 +195,8 @@ export const provinceDataList: ProvinceData[] = provincesMeta.map(pm => {
     "2022": parseFloat((scale * 1.6 + (seed % 10) / 5).toFixed(1)),
     "2023": parseFloat((scale * 1.9 + (seed % 10) / 5).toFixed(1)),
     "2024": parseFloat((scale * 2.3 + (seed % 10) / 5).toFixed(1)),
-    "2025": parseFloat((scale * 2.7 + (seed % 10) / 5).toFixed(1))
+    "2025": parseFloat((scale * 2.7 + (seed % 10) / 5).toFixed(1)),
+    "2026": parseFloat((scale * 2.7 + (seed % 10) / 5).toFixed(1))
   };
 
   const nibCount = Math.round(bumDesaCount * (0.68 + (seed % 16) / 100));
@@ -232,8 +256,17 @@ export const nationalSummary: ProvinceData = {
     "2023": 0.65586,
     "2024": 0.68532,
     "2025": 0.7060907572,
+    "2026": 0.7060907572,
   },
   idDimensions: {
+    "2026": {
+      layananDasar: 0.721,
+      sosial: 0.691,
+      ekonomi: 0.692,
+      lingkungan: 0.645,
+      aksesibilitas: 0.624,
+      tataKelola: 0.683,
+    },
     "2025": {
       layananDasar: 0.721,
       sosial: 0.691,
@@ -269,12 +302,31 @@ export const nationalSummary: ProvinceData = {
   },
   bumDesaCount: 64831,
   bumDesaStatus: {
+    "2026": {
+      aktif: 36582,
+      tidakAktif: 8521,
+      dalamPengembangan: 18451,
+      perintis: 141,
+      pemula: 29000,
+      berkembang: 5000,
+      maju: 1800
+    },
     "2025": { aktif: 46678, tidakAktif: 11670, dalamPengembangan: 6483 },
     "2024": { aktif: 40700, tidakAktif: 15850, dalamPengembangan: 8281 },
     "2023": { aktif: 36200, tidakAktif: 18600, dalamPengembangan: 10031 },
     "2022": { aktif: 31800, tidakAktif: 21500, dalamPengembangan: 11531 },
   },
   bumDesaPemeringkatan: {
+    "2026": {
+      kelembagaan: 0.682,
+      manajemen: 0.641,
+      usaha: 0.652,
+      kemitraan: 0.591,
+      asetModal: 0.615,
+      administrasi: 0.602,
+      manfaat: 0.645,
+      nilaiPemeringkatan: 44.59
+    },
     "2025": {
       kelembagaan: 0.721,
       manajemen: 0.671,
@@ -317,6 +369,7 @@ export const nationalSummary: ProvinceData = {
     "2023": 732.4,
     "2024": 852.1,
     "2025": 963.8,
+    "2026": 963.8,
   },
   nib: {
     count: 47943,
@@ -504,7 +557,8 @@ export function getFilteredData(filters: DashboardFilters): ProvinceData {
         "2022": sum2022,
         "2023": sum2023,
         "2024": sum2024,
-        "2025": sum2025
+        "2025": sum2025,
+        "2026": sum2025
       },
       nib: {
         count: totalNIBCount,

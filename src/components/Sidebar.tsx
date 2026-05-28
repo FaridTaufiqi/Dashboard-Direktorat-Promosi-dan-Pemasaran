@@ -34,7 +34,6 @@ export default function Sidebar({
     { id: "pemeringkatan", label: "Pemeringkatan", icon: Trophy },
     { id: "pades", label: "Bagi Hasil PADes", icon: Coins },
     { id: "nib", label: "NIB & Program", icon: FileCheck2 },
-    { id: "bumdes-bersama", label: "BUM Desa Bersama", icon: Users },
     { id: "keterangan", label: "Keterangan", icon: Info },
   ];
 

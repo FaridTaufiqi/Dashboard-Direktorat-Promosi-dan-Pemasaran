@@ -1,9 +1,10 @@
 import React from "react";
 import BagiHasilPADes from "../BagiHasilPADes";
-import { provinceDataList } from "../../data/mockData";
+import { ProvinceData } from "../../types";
 import { DashboardFilters } from "../../types";
 
 interface TabPADesProps {
+  provinceList: ProvinceData[];
   filters: DashboardFilters;
   activeData: any;
   handleSelectProvince: (provId: string) => void;
@@ -13,6 +14,7 @@ export default function TabPADes({
   filters,
   activeData,
   handleSelectProvince,
+  provinceList,
 }: TabPADesProps) {
   return (
     <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm space-y-6">
@@ -53,14 +55,16 @@ export default function TabPADes({
                   <th className="pb-2 text-center">Tahun 2022</th>
                   <th className="pb-2 text-center">Tahun 2023</th>
                   <th className="pb-2 text-center">Tahun 2024</th>
-                  <th className="pb-2 text-right">Tahun 2025</th>
+                  <th className="pb-2 text-center">Tahun 2025</th>
+                  <th className="pb-2 text-right">Tahun 2026</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium text-slate-650">
-                {provinceDataList.map((prov) => {
+                {provinceList.map((prov) => {
                   const h = prov.bagiHasilPADes;
                   
                   const formatCmp = (val: number) => {
+                    if (!val) return "0";
                     if (val >= 1e9) return (val / 1e9).toFixed(1).replace(".", ",") + " M";
                     if (val >= 1e6) return (val / 1e6).toFixed(1).replace(".", ",") + " Jt";
                     return val.toLocaleString("id-ID");
@@ -82,8 +86,11 @@ export default function TabPADes({
                       <td className="py-2.5 text-center font-mono">
                         Rp {formatCmp(h["2024"])}
                       </td>
-                      <td className="py-2.5 text-right font-mono font-bold text-slate-800">
+                      <td className="py-2.5 text-center font-mono">
                         Rp {formatCmp(h["2025"])}
+                      </td>
+                      <td className="py-2.5 text-right font-mono font-bold text-slate-800">
+                        Rp {formatCmp(h["2026"] || h["2025"])}
                       </td>
                     </tr>
                   );

@@ -13,7 +13,7 @@ export interface UseFiltersReturn {
 
 export function useFilters(): UseFiltersReturn {
   const [filters, setFilters] = useState<DashboardFilters>({
-    tahun: "2025",
+    tahun: "2026",
     provinsi: "ALL",
     kabupaten: "ALL",
     kecamatan: "ALL",

@@ -24,6 +24,9 @@ export interface ProvinceData {
   
   // BUM Desa stats
   bumDesaCount: number;
+  bumDesaBersamaCount?: number;
+  bumDesaTerverifikasiHukum?: number;
+  desaMandiriCount?: number;
   bumDesaStatus: {
     [year: string]: {
       aktif: number;
@@ -33,6 +36,29 @@ export interface ProvinceData {
       pemula?: number;
       berkembang?: number;
       maju?: number;
+    };
+  };
+
+  badanHukumStatus?: {
+    bumDesa: {
+      pengajuanNama: number;
+      perbaikanNama: number;
+      namaTerverifikasi: number;
+      prosesPendaftaran: number;
+      perbaikanDokumen: number;
+      terverifikasiDokumen: number;
+      kosong: number;
+      total: number;
+    };
+    bumDesaBersama: {
+      pengajuanNama: number;
+      perbaikanNama: number;
+      namaTerverifikasi: number;
+      prosesPendaftaran: number;
+      perbaikanDokumen: number;
+      terverifikasiDokumen: number;
+      kosong: number;
+      total: number;
     };
   };
   

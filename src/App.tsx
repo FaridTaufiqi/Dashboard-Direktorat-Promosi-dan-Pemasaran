@@ -54,7 +54,7 @@ export default function App() {
   } = useSheetSync(filters);
 
   const isAllProvinces = filters.provinsi === "ALL";
-  const years = ["2022", "2023", "2024", "2025"];
+  const years = ["2022", "2023", "2024", "2025", "2026"];
 
   const handleSelectProvince = (provId: string) => {
     setFilters({
@@ -183,7 +183,7 @@ export default function App() {
                 className="bg-transparent font-extrabold focus:outline-hidden text-slate-700 cursor-pointer max-w-[150px] md:max-w-xs pl-1"
               >
                 <option value="ALL">Semua Provinsi (Nasional)</option>
-                {provinceDataList.map((p) => (
+                {(sheetsData?.provinces || provinceDataList).map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.name}
                   </option>
@@ -342,7 +342,7 @@ export default function App() {
                   <>
                     <span className="text-slate-300 select-none">&rsaquo;</span>
                     <span className="font-extrabold uppercase text-blue-700 bg-blue-100/65 px-2 py-0.5 rounded-md">
-                      {provinceDataList.find((p) => p.id === filters.provinsi)?.name}
+                      {(sheetsData?.provinces || provinceDataList).find((p) => p.id === filters.provinsi)?.name}
                     </span>
                   </>
                 )}
@@ -410,6 +410,7 @@ export default function App() {
               filters={filters}
               activeData={activeData}
               handleSelectProvince={handleSelectProvince}
+              provinceList={sheetsData?.provinces || provinceDataList}
             />
           )}
 
@@ -418,6 +419,7 @@ export default function App() {
               filters={filters}
               activeData={activeData}
               handleSelectProvince={handleSelectProvince}
+              provinceList={sheetsData?.provinces || provinceDataList}
             />
           )}
 
@@ -426,6 +428,7 @@ export default function App() {
               filters={filters}
               activeData={activeData}
               handleSelectProvince={handleSelectProvince}
+              provinceList={sheetsData?.provinces || provinceDataList}
             />
           )}
 
@@ -434,6 +437,7 @@ export default function App() {
               filters={filters}
               activeData={activeData}
               handleSelectProvince={handleSelectProvince}
+              provinceList={sheetsData?.provinces || provinceDataList}
             />
           )}
 
@@ -442,6 +446,7 @@ export default function App() {
               filters={filters}
               activeData={activeData}
               handleSelectProvince={handleSelectProvince}
+              provinceList={sheetsData?.provinces || provinceDataList}
             />
           )}
 
@@ -452,6 +457,7 @@ export default function App() {
               filters={filters}
               activeData={activeData}
               handleSelectProvince={handleSelectProvince}
+              provinceList={sheetsData?.provinces || provinceDataList}
             />
           )}
 

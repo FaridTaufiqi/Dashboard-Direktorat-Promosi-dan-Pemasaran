@@ -111,7 +111,7 @@ export default function PemeringkatanBUMDesa({ data, tahun }: PemeringkatanBUMDe
                 : "text-slate-500 hover:text-slate-800"
             }`}
           >
-            BERSAMA
+            BUM DESA BERSAMA
           </button>
         </div>
       </div>

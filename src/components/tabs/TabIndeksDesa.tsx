@@ -1,10 +1,11 @@
 import React from "react";
 import IndeksDesaRadar from "../IndeksDesaRadar";
 import { formatIndoPrecise } from "../KPICards";
-import { provinceDataList } from "../../data/mockData";
+import { ProvinceData } from "../../types";
 import { DashboardFilters } from "../../types";
 
 interface TabIndeksDesaProps {
+  provinceList: ProvinceData[];
   filters: DashboardFilters;
   activeData: any;
   handleSelectProvince: (provId: string) => void;
@@ -14,6 +15,7 @@ export default function TabIndeksDesa({
   filters,
   activeData,
   handleSelectProvince,
+  provinceList,
 }: TabIndeksDesaProps) {
   return (
     <div className="space-y-6 bg-white border border-slate-200 p-6 rounded-xl shadow-sm">
@@ -55,7 +57,7 @@ export default function TabIndeksDesa({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium text-slate-600">
-                {provinceDataList.map((prov) => {
+                {provinceList.map((prov) => {
                   const d = prov.idDimensions[filters.tahun] || prov.idDimensions["2025"];
                   return (
                     <tr

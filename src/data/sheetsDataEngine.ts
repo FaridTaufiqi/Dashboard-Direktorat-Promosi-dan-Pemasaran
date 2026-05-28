@@ -47,6 +47,41 @@ export function getCSVExportUrl(url: string, useGviz: boolean = false): string {
   }
 }
 
+export function getBadanHukumStatus(rows: RawVillageRow[], type: 'bumDesa' | 'bumDesaBersama') {
+  let pengajuanNama = 0;
+  let perbaikanNama = 0;
+  let namaTerverifikasi = 0;
+  let prosesPendaftaran = 0;
+  let perbaikanDokumen = 0;
+  let terverifikasiDokumen = 0;
+  let kosong = 0;
+
+  rows.forEach(r => {
+    // Only check valid bum desa rows for 'bumDesa' and valid bersama for 'bumDesaBersama'
+    // To match exact raw frequency of these words across all rows exactly like requested
+    const val = type === 'bumDesa' ? (r.bumDesaStatusName || "").toUpperCase() : (r.bumDesaBersamaStatusName || "").toUpperCase();
+    
+    if (val.includes("PENGAJUAN NAMA")) pengajuanNama++;
+    else if (val.includes("PERBAIKAN NAMA")) perbaikanNama++;
+    else if (val.includes("NAMA TERVERIFIKASI")) namaTerverifikasi++;
+    else if (val.includes("PROSES PENDAFTARAN")) prosesPendaftaran++;
+    else if (val.includes("PERBAIKAN DOKUMEN")) perbaikanDokumen++;
+    else if (val.includes("TERVERIFIKASI DOKUMEN") || val.includes("TERVERFIKASI DOKUMEN")) terverifikasiDokumen++;
+    else kosong++; 
+  });
+
+  return {
+    pengajuanNama,
+    perbaikanNama,
+    namaTerverifikasi,
+    prosesPendaftaran,
+    perbaikanDokumen,
+    terverifikasiDokumen,
+    kosong,
+    total: pengajuanNama + perbaikanNama + namaTerverifikasi + prosesPendaftaran + perbaikanDokumen + terverifikasiDokumen + kosong
+  };
+}
+
 export interface RawVillageRow {
   provinsi: string;
   kabupaten: string;
@@ -74,7 +109,9 @@ export interface RawVillageRow {
   bagiHasil2025: number;
   nib: string; // NOMOR INDUK BERUSAHA (NIB)
   bumDesaName: string; // Column Q (BUM DESA)
+  bumDesaStatusName: string; // Column R (STATUS BUM DESA)
   bumDesaBersamaName: string; // Column AK (BUM DESA BERSAMA)
+  bumDesaBersamaStatusName: string; // Column AL (STATUS BUM DESA BERSAMA)
   idKab: string; // Column C
   idKec: string; // Column E
   kodeDesa: string; // Column G
@@ -187,10 +224,10 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
     return -1;
   };
 
-  const idxProvinsi = getIndex(["PROV", "PROVINSI"]);
-  const idxKabupaten = getIndex(["KAB", "KABUPATEN", "KOTA"]);
-  const idxKecamatan = getIndex(["KEC", "KECAMATAN"]);
-  const idxDesa = getIndex(["DESA", "KELURAHAN"]);
+  const idxProvinsi = headers.indexOf("NAMA PROVINSI") !== -1 ? headers.indexOf("NAMA PROVINSI") : getIndex(["NAMA PROVINSI", "PROVINSI"]);
+  const idxKabupaten = headers.indexOf("NAMA KABUPATEN / KOTA") !== -1 ? headers.indexOf("NAMA KABUPATEN / KOTA") : (headers.indexOf("NAMA KABUPATEN") !== -1 ? headers.indexOf("NAMA KABUPATEN") : getIndex(["NAMA KAB", "KABUPATEN", "KOTA"]));
+  const idxKecamatan = headers.indexOf("KECAMATAN") !== -1 ? headers.indexOf("KECAMATAN") : getIndex(["NAMA KEC", "KECAMATAN"]);
+  const idxDesa = headers.indexOf("DESA/KELURAHAN") !== -1 ? headers.indexOf("DESA/KELURAHAN") : getIndex(["NAMA DESA", "KELURAHAN", "DESA"]);
 
   // Precise Column fallbacks based on precise column IDs from user
   const idxIdKab = headers.indexOf("ID KAB") !== -1 ? headers.indexOf("ID KAB") : 2; // Column C
@@ -209,7 +246,8 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
   const idxTataKelola = headers.indexOf("TATA KELOLA PEMERINTAH") !== -1 ? headers.indexOf("TATA KELOLA PEMERINTAH") : (headers.indexOf("TATA KELOLA") !== -1 ? headers.indexOf("TATA KELOLA") : 13); // Column N
 
   // BUM Des status / pemeringkatan
-  const idxBumDesClass = getIndex(["PEMERINGKATAN BUM DESA", "LEVEL BUM DESA", "STATUS BUM DESA"]);
+  const idxStatusBumDesa = headers.indexOf("STATUS BUM DESA") !== -1 ? headers.indexOf("STATUS BUM DESA") : 17; // Column R
+  const idxBumDesClass = Math.max(getIndex(["PEMERINGKATAN BUM DESA", "LEVEL BUM DESA"]), 0);
   
   // BUM Des aspects
   const idxAspekKelembagaan = headers.indexOf("ASPEK KELEMBAGAAN") !== -1 ? headers.indexOf("ASPEK KELEMBAGAAN") : 18; // Column S
@@ -233,6 +271,7 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
   const idxNib = headers.indexOf("NOMOR INDUK BERUSAHA (NIB)") !== -1 ? headers.indexOf("NOMOR INDUK BERUSAHA (NIB)") : 31; // Column AF
 
   // BUM Desa Bersama aspects (AM, AN, AO, AP, AQ, AR, AS, AT, AU)
+  const idxStatusBumDesaBersama = headers.indexOf("STATUS BUM DESA BERSAMA") !== -1 ? headers.indexOf("STATUS BUM DESA BERSAMA") : 37; // Column AL
   const idxAspekKelembagaanBersama = headers.indexOf("ASPEK KELEMBAGAAN BERSAMA") !== -1 ? headers.indexOf("ASPEK KELEMBAGAAN BERSAMA") : 38; // Column AM
   const idxAspekManajemenBersama = headers.indexOf("ASPEK MANAJEMEN BERSAMA") !== -1 ? headers.indexOf("ASPEK MANAJEMEN BERSAMA") : 39; // Column AN
   const idxAspekUsahaBersama = headers.indexOf("ASPEK USAHA BERSAMA") !== -1 ? headers.indexOf("ASPEK USAHA BERSAMA") : 40; // Column AO
@@ -368,7 +407,9 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
       bagiHasil2025: idxBagiHasil25 !== -1 ? cleanRupiah(cells[idxBagiHasil25]) : 0,
       nib: idxNib !== -1 ? (cells[idxNib] || "").trim() : "",
       bumDesaName: idxBumDesaName !== -1 ? (cells[idxBumDesaName] || "").trim() : "",
+      bumDesaStatusName: idxStatusBumDesa !== -1 ? (cells[idxStatusBumDesa] || "").trim() : "",
       bumDesaBersamaName: idxBumDesaBersamaName !== -1 ? (cells[idxBumDesaBersamaName] || "").trim() : "",
+      bumDesaBersamaStatusName: idxStatusBumDesaBersama !== -1 ? (cells[idxStatusBumDesaBersama] || "").trim() : "",
       idKab: idxIdKab !== -1 ? (cells[idxIdKab] || "").trim() : "",
       idKec: idxIdKec !== -1 ? (cells[idxIdKec] || "").trim() : "",
       kodeDesa: idxKodeDesa !== -1 ? (cells[idxKodeDesa] || "").trim() : "",
@@ -493,6 +534,17 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
     // Let's implement distinct BUM Desa by bumDesaName where AA has value:
     const uniqueBumDesas = new Set(provRows.filter(r => r.pemeringkatanBumDesa.trim() !== "" && r.pemeringkatanBumDesa !== "-").map(r => r.bumDesaName || r.kodeDesa));
     const finalTotalBum = provRows.filter(r => r.pemeringkatanBumDesa.trim() !== "" && r.pemeringkatanBumDesa !== "-").length;
+    
+    const validBersama = provRows.filter(r => r.bumDesaBersamaName.trim() !== "" && r.bumDesaBersamaName !== "-");
+    const countBumDesaBersama = new Set(validBersama.map(r => r.bumDesaBersamaName.trim())).size;
+    
+    // Check "Terverifikasi Badan Hukum" via "TERVERIFIKASI DOKUMEN"
+    const terverifikasiBum = provRows.filter(r => r.bumDesaStatusName.toUpperCase().includes("TERVERIFIKASI DOKUMEN") || r.bumDesaStatusName.toUpperCase().includes("TERVERFIKASI DOKUMEN")).length;
+    const terverifikasiBersama = provRows.filter(r => r.bumDesaBersamaStatusName.toUpperCase().includes("TERVERIFIKASI DOKUMEN") || r.bumDesaBersamaStatusName.toUpperCase().includes("TERVERFIKASI DOKUMEN")).length;
+    const finalTerverifikasiHukum = terverifikasiBum + terverifikasiBersama;
+    
+    // Check Desa Mandiri
+    const countDesaMandiri = provRows.filter(r => r.indeksDesaClass.toUpperCase() === "MANDIRI").length;
 
     // BUM Desa Bersama Classifications Status Breakdown
     // dihitung dari distinct / frequency pada Kolom AU (PEMERINGKATAN BUM DESA BERSAMA)
@@ -600,7 +652,8 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
         "2022": 0,
         "2023": 0,
         "2024": 0,
-        "2025": parseFloat(avgScore.toFixed(8))
+        "2025": parseFloat(avgScore.toFixed(8)),
+        "2026": parseFloat(avgScore.toFixed(8))
       },
       idDimensions: {
         "2025": {
@@ -610,14 +663,40 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
           lingkungan: parseFloat(avgLingkungan.toFixed(8)),
           aksesibilitas: parseFloat(avgAksesibilitas.toFixed(8)),
           tataKelola: parseFloat(avgTataKelola.toFixed(8))
+        },
+        "2026": {
+          layananDasar: parseFloat(avgLayananDasar.toFixed(8)),
+          sosial: parseFloat(avgSosial.toFixed(8)),
+          ekonomi: parseFloat(avgEkonomi.toFixed(8)),
+          lingkungan: parseFloat(avgLingkungan.toFixed(8)),
+          aksesibilitas: parseFloat(avgAksesibilitas.toFixed(8)),
+          tataKelola: parseFloat(avgTataKelola.toFixed(8))
         }
       },
       bumDesaCount: finalTotalBum,
+      bumDesaBersamaCount: countBumDesaBersama,
+      bumDesaTerverifikasiHukum: finalTerverifikasiHukum,
+      desaMandiriCount: countDesaMandiri,
+      badanHukumStatus: {
+        bumDesa: getBadanHukumStatus(provRows, 'bumDesa'),
+        bumDesaBersama: getBadanHukumStatus(provRows, 'bumDesaBersama')
+      },
       bumDesaStatus: {
-        "2025": bStatus
+        "2025": bStatus,
+        "2026": bStatus
       },
       bumDesaPemeringkatan: {
         "2025": {
+          kelembagaan: parseFloat(avgAspekKelembagaan.toFixed(3)),
+          manajemen: parseFloat(avgAspekManajemen.toFixed(3)),
+          usaha: parseFloat(avgAspekUsaha.toFixed(3)),
+          kemitraan: parseFloat(avgAspekKemitraan.toFixed(3)),
+          asetModal: parseFloat(avgAspekAsetModal.toFixed(3)),
+          administrasi: parseFloat(avgAspekAdministrasi.toFixed(3)),
+          manfaat: parseFloat(avgAspekManfaat.toFixed(3)),
+          nilaiPemeringkatan: parseFloat(avgNilaiPemeringkatanBumDesa.toFixed(3))
+        },
+        "2026": {
           kelembagaan: parseFloat(avgAspekKelembagaan.toFixed(3)),
           manajemen: parseFloat(avgAspekManajemen.toFixed(3)),
           usaha: parseFloat(avgAspekUsaha.toFixed(3)),
@@ -632,7 +711,8 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
         "2022": sumPADes22,
         "2023": sumPADes23,
         "2024": sumPADes24,
-        "2025": sumPADes25
+        "2025": sumPADes25,
+        "2026": sumPADes25
       },
       nib: {
         count: finalNIBCount,
@@ -672,8 +752,15 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
   const uniqueNationalDesas = new Set(rawRows.map(r => r.kodeDesa).filter(Boolean)).size;
 
   const nationalBumDesaCount = rawRows.filter(r => r.pemeringkatanBumDesa.trim() !== "" && r.pemeringkatanBumDesa !== "-").length;
-
-  const nationalBumDesaBersamaCount = rawRows.filter(r => r.pemeringkatanBumDesaBersama.trim() !== "" && r.pemeringkatanBumDesaBersama !== "-").length;
+  
+  const validBersamaNat = rawRows.filter(r => r.bumDesaBersamaName.trim() !== "" && r.bumDesaBersamaName !== "-");
+  const countBumDesaBersamaNat = new Set(validBersamaNat.map(r => r.bumDesaBersamaName.trim())).size;
+  
+  const terverifikasiBumNat = rawRows.filter(r => r.bumDesaStatusName.toUpperCase().includes("TERVERIFIKASI DOKUMEN") || r.bumDesaStatusName.toUpperCase().includes("TERVERFIKASI DOKUMEN")).length;
+  const terverifikasiBersamaNat = rawRows.filter(r => r.bumDesaBersamaStatusName.toUpperCase().includes("TERVERIFIKASI DOKUMEN") || r.bumDesaBersamaStatusName.toUpperCase().includes("TERVERFIKASI DOKUMEN")).length;
+  const finalTerverifikasiHukumNat = terverifikasiBumNat + terverifikasiBersamaNat;
+  
+  const countDesaMandiriNat = rawRows.filter(r => r.indeksDesaClass.toUpperCase() === "MANDIRI").length;
 
   const nationalValidBumRows = rawRows.filter(r => r.nilaiPemeringkatanBumDesa > 0.1);
   const nationalValidBumDesmaRows = rawRows.filter(r => r.nilaiPemeringkatanBumDesaBersama > 0.1);
@@ -722,7 +809,8 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
       "2022": 0,
       "2023": 0,
       "2024": 0,
-      "2025": parseFloat(avgIDAll.toFixed(8))
+      "2025": parseFloat(avgIDAll.toFixed(8)),
+      "2026": parseFloat(avgIDAll.toFixed(8))
     },
     idDimensions: {
       "2025": {
@@ -732,9 +820,24 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
         lingkungan: parseFloat(avgLingAll.toFixed(8)),
         aksesibilitas: parseFloat(avgAksAll.toFixed(8)),
         tataKelola: parseFloat(avgKelolaAll.toFixed(8))
+      },
+      "2026": {
+        layananDasar: parseFloat(avgLDAll.toFixed(8)),
+        sosial: parseFloat(avgSosAll.toFixed(8)),
+        ekonomi: parseFloat(avgEkoAll.toFixed(8)),
+        lingkungan: parseFloat(avgLingAll.toFixed(8)),
+        aksesibilitas: parseFloat(avgAksAll.toFixed(8)),
+        tataKelola: parseFloat(avgKelolaAll.toFixed(8))
       }
     },
     bumDesaCount: nationalBumDesaCount,
+    bumDesaBersamaCount: countBumDesaBersamaNat,
+    bumDesaTerverifikasiHukum: finalTerverifikasiHukumNat,
+    desaMandiriCount: countDesaMandiriNat,
+    badanHukumStatus: {
+      bumDesa: getBadanHukumStatus(rawRows, 'bumDesa'),
+      bumDesaBersama: getBadanHukumStatus(rawRows, 'bumDesaBersama')
+    },
     bumDesaStatus: {
       "2025": {
         aktif: parsedProvinces.reduce((sum, p) => sum + (p.bumDesaStatus["2025"]?.aktif || 0), 0),
@@ -744,10 +847,29 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
         pemula: parsedProvinces.reduce((sum, p) => sum + (p.bumDesaStatus["2025"]?.pemula || 0), 0),
         berkembang: parsedProvinces.reduce((sum, p) => sum + (p.bumDesaStatus["2025"]?.berkembang || 0), 0),
         maju: parsedProvinces.reduce((sum, p) => sum + (p.bumDesaStatus["2025"]?.maju || 0), 0)
+      },
+      "2026": {
+        aktif: parsedProvinces.reduce((sum, p) => sum + (p.bumDesaStatus["2026"]?.aktif || 0), 0),
+        tidakAktif: parsedProvinces.reduce((sum, p) => sum + (p.bumDesaStatus["2026"]?.tidakAktif || 0), 0),
+        dalamPengembangan: parsedProvinces.reduce((sum, p) => sum + (p.bumDesaStatus["2026"]?.dalamPengembangan || 0), 0),
+        perintis: parsedProvinces.reduce((sum, p) => sum + (p.bumDesaStatus["2026"]?.perintis || 0), 0),
+        pemula: parsedProvinces.reduce((sum, p) => sum + (p.bumDesaStatus["2026"]?.pemula || 0), 0),
+        berkembang: parsedProvinces.reduce((sum, p) => sum + (p.bumDesaStatus["2026"]?.berkembang || 0), 0),
+        maju: parsedProvinces.reduce((sum, p) => sum + (p.bumDesaStatus["2026"]?.maju || 0), 0)
       }
     },
     bumDesaPemeringkatan: {
       "2025": {
+        kelembagaan: parseFloat(avgAspekKelembagaanNat.toFixed(3)),
+        manajemen: parseFloat(avgAspekManajemenNat.toFixed(3)),
+        usaha: parseFloat(avgAspekUsahaNat.toFixed(3)),
+        kemitraan: parseFloat(avgAspekKemitraanNat.toFixed(3)),
+        asetModal: parseFloat(avgAspekAsetModalNat.toFixed(3)),
+        administrasi: parseFloat(avgAspekAdministrasiNat.toFixed(3)),
+        manfaat: parseFloat(avgAspekManfaatNat.toFixed(3)),
+        nilaiPemeringkatan: parseFloat(avgNilaiPemeringkatanBumDesaNat.toFixed(3))
+      },
+      "2026": {
         kelembagaan: parseFloat(avgAspekKelembagaanNat.toFixed(3)),
         manajemen: parseFloat(avgAspekManajemenNat.toFixed(3)),
         usaha: parseFloat(avgAspekUsahaNat.toFixed(3)),
@@ -762,7 +884,8 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
       "2022": parseFloat(sumPADes22Nat.toFixed(1)),
       "2023": parseFloat(sumPADes23Nat.toFixed(1)),
       "2024": parseFloat(sumPADes24Nat.toFixed(1)),
-      "2025": parseFloat(sumPADes25Nat.toFixed(1))
+      "2025": parseFloat(sumPADes25Nat.toFixed(1)),
+      "2026": parseFloat(sumPADes25Nat.toFixed(1))
     },
     nib: {
       count: totalNIBCount,
@@ -775,7 +898,7 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
       mbg2026: Math.round(uniqueNationalDesas * 0.18)
     },
     bumDesaBersama: {
-      count: nationalBumDesaBersamaCount,
+      count: countBumDesaBersamaNat,
       aktif: parsedProvinces.reduce((sum, p) => sum + (p.bumDesaBersama.aktif || 0), 0),
       tidakAktif: parsedProvinces.reduce((sum, p) => sum + (p.bumDesaBersama.tidakAktif || 0), 0),
       pemeringkatanNilai: parseFloat(avgNilaiPemeringkatanBumDesaBersamaNat.toFixed(3)),
@@ -865,6 +988,15 @@ export function getFilteredSheetsData(
   const cntMajuValueHex = scopeRows.filter(r => r.pemeringkatanBumDesa.toUpperCase().includes("MAJU")).length;
   const finalTotalBum = scopeRows.filter(r => r.pemeringkatanBumDesa.trim() !== "" && r.pemeringkatanBumDesa !== "-").length;
   const bumCount = finalTotalBum;
+  
+  const validBersamaScope = scopeRows.filter(r => r.bumDesaBersamaName.trim() !== "" && r.bumDesaBersamaName !== "-");
+  const countBumDesaBersamaScope = new Set(validBersamaScope.map(r => r.bumDesaBersamaName.trim())).size;
+  
+  const terverifikasiBumScope = scopeRows.filter(r => r.bumDesaStatusName.toUpperCase().includes("TERVERIFIKASI DOKUMEN") || r.bumDesaStatusName.toUpperCase().includes("TERVERFIKASI DOKUMEN")).length;
+  const terverifikasiBersamaScope = scopeRows.filter(r => r.bumDesaBersamaStatusName.toUpperCase().includes("TERVERIFIKASI DOKUMEN") || r.bumDesaBersamaStatusName.toUpperCase().includes("TERVERFIKASI DOKUMEN")).length;
+  const finalTerverifikasiHukumScope = terverifikasiBumScope + terverifikasiBersamaScope;
+  
+  const countDesaMandiriScope = scopeRows.filter(r => r.indeksDesaClass.toUpperCase() === "MANDIRI").length;
 
   // BUM Desa Bersama Classifications Status Breakdown
   // dihitung dari distinct / frequency pada Kolom AU (PEMERINGKATAN BUM DESA BERSAMA)
@@ -973,7 +1105,8 @@ export function getFilteredSheetsData(
       "2022": 0,
       "2023": 0,
       "2024": 0,
-      "2025": parseFloat(avgScore.toFixed(8))
+      "2025": parseFloat(avgScore.toFixed(8)),
+      "2026": parseFloat(avgScore.toFixed(8))
     },
     idDimensions: {
       "2025": {
@@ -983,14 +1116,40 @@ export function getFilteredSheetsData(
         lingkungan: parseFloat(avgLing.toFixed(8)),
         aksesibilitas: parseFloat(avgAks.toFixed(8)),
         tataKelola: parseFloat(avgKelola.toFixed(8))
+      },
+      "2026": {
+        layananDasar: parseFloat(avgLD.toFixed(8)),
+        sosial: parseFloat(avgSos.toFixed(8)),
+        ekonomi: parseFloat(avgEko.toFixed(8)),
+        lingkungan: parseFloat(avgLing.toFixed(8)),
+        aksesibilitas: parseFloat(avgAks.toFixed(8)),
+        tataKelola: parseFloat(avgKelola.toFixed(8))
       }
     },
     bumDesaCount: bumCount,
+    bumDesaBersamaCount: countBumDesaBersamaScope,
+    bumDesaTerverifikasiHukum: finalTerverifikasiHukumScope,
+    desaMandiriCount: countDesaMandiriScope,
+    badanHukumStatus: {
+      bumDesa: getBadanHukumStatus(scopeRows, 'bumDesa'),
+      bumDesaBersama: getBadanHukumStatus(scopeRows, 'bumDesaBersama')
+    },
     bumDesaStatus: {
-      "2025": bStatus
+      "2025": bStatus,
+      "2026": bStatus
     },
     bumDesaPemeringkatan: {
       "2025": {
+        kelembagaan: parseFloat(avgAspekKelembagaan.toFixed(3)),
+        manajemen: parseFloat(avgAspekManajemen.toFixed(3)),
+        usaha: parseFloat(avgAspekUsaha.toFixed(3)),
+        kemitraan: parseFloat(avgAspekKemitraan.toFixed(3)),
+        asetModal: parseFloat(avgAspekAsetModal.toFixed(3)),
+        administrasi: parseFloat(avgAspekAdministrasi.toFixed(3)),
+        manfaat: parseFloat(avgAspekManfaat.toFixed(3)),
+        nilaiPemeringkatan: parseFloat(avgNilaiPemeringkatanBumDesa.toFixed(3))
+      },
+      "2026": {
         kelembagaan: parseFloat(avgAspekKelembagaan.toFixed(3)),
         manajemen: parseFloat(avgAspekManajemen.toFixed(3)),
         usaha: parseFloat(avgAspekUsaha.toFixed(3)),
@@ -1005,7 +1164,8 @@ export function getFilteredSheetsData(
       "2022": sumPADes22,
       "2023": sumPADes23,
       "2024": sumPADes24,
-      "2025": sumPADes25
+      "2025": sumPADes25,
+      "2026": sumPADes25
     },
     nib: {
       count: finalNIBCount,

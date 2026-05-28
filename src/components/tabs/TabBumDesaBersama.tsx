@@ -1,9 +1,10 @@
 import React from "react";
 import { formatIndoPrecise, formatIndoNumber } from "../KPICards";
-import { provinceDataList } from "../../data/mockData";
+import { ProvinceData } from "../../types";
 import { DashboardFilters } from "../../types";
 
 interface TabBumDesaBersamaProps {
+  provinceList: ProvinceData[];
   filters: DashboardFilters;
   activeData: any;
   handleSelectProvince: (provId: string) => void;
@@ -13,6 +14,7 @@ export default function TabBumDesaBersama({
   filters,
   activeData,
   handleSelectProvince,
+  provinceList,
 }: TabBumDesaBersamaProps) {
   return (
     <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm space-y-6">
@@ -79,7 +81,7 @@ export default function TabBumDesaBersama({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium text-slate-655">
-                {provinceDataList.map((prov) => {
+                {provinceList.map((prov) => {
                   const bm = prov.bumDesaBersama;
                   return (
                     <tr

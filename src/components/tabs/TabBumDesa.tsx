@@ -2,10 +2,11 @@ import React from "react";
 import { BookmarkCheck } from "lucide-react";
 import BUMDesaChart from "../BUMDesaChart";
 import { formatIndoNumber } from "../KPICards";
-import { provinceDataList } from "../../data/mockData";
+import { ProvinceData } from "../../types";
 import { DashboardFilters } from "../../types";
 
 interface TabBumDesaProps {
+  provinceList: ProvinceData[];
   filters: DashboardFilters;
   activeData: any;
   handleSelectProvince: (provId: string) => void;
@@ -15,6 +16,7 @@ export default function TabBumDesa({
   filters,
   activeData,
   handleSelectProvince,
+  provinceList,
 }: TabBumDesaProps) {
   return (
     <div className="space-y-6 bg-white border border-slate-200 p-6 rounded-xl shadow-sm">
@@ -32,7 +34,7 @@ export default function TabBumDesa({
           data={activeData}
           tahun={filters.tahun}
           onSelectProvince={handleSelectProvince}
-          provinceList={provinceDataList}
+          provinceList={provinceList}
         />
 
         {/* Advanced statistics table */}
@@ -66,7 +68,7 @@ export default function TabBumDesa({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium text-slate-650">
-                {provinceDataList.map((prov) => {
+                {provinceList.map((prov) => {
                   const s = prov.bumDesaStatus[filters.tahun] || {
                     aktif: 0,
                     tidakAktif: 0,

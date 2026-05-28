@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import PemeringkatanBUMDesa from "../PemeringkatanBUMDesa";
 import { formatIndoDecimal } from "../KPICards";
-import { provinceDataList } from "../../data/mockData";
+import { ProvinceData } from "../../types";
 import { DashboardFilters } from "../../types";
 
 interface TabPemeringkatanProps {
+  provinceList: ProvinceData[];
   filters: DashboardFilters;
   activeData: any;
   handleSelectProvince: (provId: string) => void;
@@ -14,6 +15,7 @@ export default function TabPemeringkatan({
   filters,
   activeData,
   handleSelectProvince,
+  provinceList,
 }: TabPemeringkatanProps) {
   const [tableIsBersama, setTableIsBersama] = useState(false);
 
@@ -78,7 +80,7 @@ export default function TabPemeringkatan({
                     tableIsBersama ? "bg-white text-blue-700 shadow-xs" : "text-slate-500 hover:text-slate-800"
                   }`}
                 >
-                  BERSAMA
+                  BUM DESA BERSAMA
                 </button>
               </div>
             </div>
@@ -94,7 +96,7 @@ export default function TabPemeringkatan({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium text-slate-650">
-                {provinceDataList.map((prov) => {
+                {provinceList.map((prov) => {
                   const p = !tableIsBersama ? (prov.bumDesaPemeringkatan[filters.tahun] ||
                     prov.bumDesaPemeringkatan["2025"] || {
                       kelembagaan: 0.6,

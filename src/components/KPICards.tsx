@@ -1,5 +1,5 @@
 import React from "react";
-import { Map, Building2, MapPin, Home, TrendingUp, Store } from "lucide-react";
+import { Map, Building2, MapPin, Home, TrendingUp, Store, Users, ShieldCheck, Award } from "lucide-react";
 import { ProvinceData } from "../types";
 
 interface KPICardsProps {
@@ -46,6 +46,9 @@ export default function KPICards({ data, tahun, isAllProvinces }: KPICardsProps)
   const trendText = `${trendSign} ${Math.abs(diff).toFixed(3).replace(".", ",")} dari ${prevYear}`;
 
   const bumdesValue = formatIndoNumber(data.bumDesaCount);
+  const bumdesBersamaValue = formatIndoNumber(data.bumDesaBersamaCount || 0);
+  const bumdesTerverifikasiValue = formatIndoNumber(data.bumDesaTerverifikasiHukum || 0);
+  const desaMandiriValue = formatIndoNumber(data.desaMandiriCount || 0);
 
   const kpis = [
     {
@@ -112,10 +115,40 @@ export default function KPICards({ data, tahun, isAllProvinces }: KPICardsProps)
       bg: "bg-white border-slate-200 hover:border-slate-300",
       iconBg: "bg-indigo-50 text-indigo-600 border border-indigo-100",
     },
+    {
+      id: "kpi-bumdes-bersama",
+      title: "BUM Desa Bersama",
+      value: bumdesBersamaValue,
+      suffix: "BUM Desa Bersama",
+      subtext: "Terdaftar secara Resmi",
+      icon: Users,
+      bg: "bg-white border-slate-200 hover:border-slate-300",
+      iconBg: "bg-cyan-50 text-cyan-600 border border-cyan-100",
+    },
+    {
+      id: "kpi-bumdes-terverifikasi",
+      title: "Terverifikasi Badan Hukum",
+      value: bumdesTerverifikasiValue,
+      suffix: "Lembaga",
+      subtext: "BUM Desa & Bersama",
+      icon: ShieldCheck,
+      bg: "bg-white border-slate-200 hover:border-slate-300",
+      iconBg: "bg-sky-50 text-sky-600 border border-sky-100",
+    },
+    {
+      id: "kpi-desa-mandiri",
+      title: "Desa Mandiri",
+      value: desaMandiriValue,
+      suffix: "Desa",
+      subtext: "Berdasarkan Indeks Desa",
+      icon: Award,
+      bg: "bg-white border-slate-200 hover:border-slate-300",
+      iconBg: "bg-yellow-50 text-yellow-600 border border-yellow-100",
+    },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
       {kpis.map((kpi) => {
         const Icon = kpi.icon;
         return (

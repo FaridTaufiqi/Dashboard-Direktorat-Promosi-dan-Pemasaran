@@ -6,10 +6,11 @@ import BUMDesaChart from "../BUMDesaChart";
 import PemeringkatanBUMDesa from "../PemeringkatanBUMDesa";
 import BagiHasilPADes from "../BagiHasilPADes";
 import NIBandProgram from "../NIBandProgram";
-import { provinceDataList } from "../../data/mockData";
+import { ProvinceData } from "../../types";
 import { DashboardFilters } from "../../types";
 
 interface TabRingkasanProps {
+  provinceList: ProvinceData[];
   filters: DashboardFilters;
   activeData: any;
   handleSelectProvince: (provId: string) => void;
@@ -19,6 +20,7 @@ export default function TabRingkasan({
   filters,
   activeData,
   handleSelectProvince,
+  provinceList,
 }: TabRingkasanProps) {
   return (
     <div className="space-y-6">
@@ -28,14 +30,14 @@ export default function TabRingkasan({
           <RingkasanWilayah
             selectedProvince={filters.provinsi}
             onSelectProvince={handleSelectProvince}
-            provinceList={provinceDataList}
+            provinceList={provinceList}
           />
         </div>
         <div className="xl:col-span-5 h-full">
           <SVGIndonesiaMap
             selectedProvince={filters.provinsi}
             onSelectProvince={handleSelectProvince}
-            provinceList={provinceDataList}
+            provinceList={provinceList}
             tahun={filters.tahun}
           />
         </div>
@@ -50,7 +52,7 @@ export default function TabRingkasan({
           data={activeData}
           tahun={filters.tahun}
           onSelectProvince={handleSelectProvince}
-          provinceList={provinceDataList}
+          provinceList={provinceList}
         />
         <PemeringkatanBUMDesa data={activeData} tahun={filters.tahun} />
         <BagiHasilPADes data={activeData} tahun={filters.tahun} />

@@ -106,31 +106,50 @@ export default function BUMDesaChart({
   }, [fallbackTotal, avgAspectScore, seedKey]);
 
   // Use real sheet statistics if populated, otherwise fallback to gaussian weights
-  const perintis = activeYearData.perintis !== undefined ? activeYearData.perintis : gradingBreakdown.perintis;
+    const perintis = activeYearData.perintis !== undefined ? activeYearData.perintis : gradingBreakdown.perintis;
   const pemula = activeYearData.pemula !== undefined ? activeYearData.pemula : gradingBreakdown.pemula;
   const berkembang = activeYearData.berkembang !== undefined ? activeYearData.berkembang : gradingBreakdown.berkembang;
   const maju = activeYearData.maju !== undefined ? activeYearData.maju : gradingBreakdown.maju;
 
-  const totalBumDes = perintis + pemula + berkembang + maju;
+  const totalBumDesPemeringkatan = perintis + pemula + berkembang + maju;
 
-  const pctPerintis = totalBumDes > 0 ? (perintis / totalBumDes) * 100 : 0;
-  const pctPemula = totalBumDes > 0 ? (pemula / totalBumDes) * 100 : 0;
-  const pctBerkembang = totalBumDes > 0 ? (berkembang / totalBumDes) * 100 : 0;
-  const pctMaju = totalBumDes > 0 ? (maju / totalBumDes) * 100 : 0;
+  const pctPerintis = totalBumDesPemeringkatan > 0 ? (perintis / totalBumDesPemeringkatan) * 100 : 0;
+  const pctPemula = totalBumDesPemeringkatan > 0 ? (pemula / totalBumDesPemeringkatan) * 100 : 0;
+  const pctBerkembang = totalBumDesPemeringkatan > 0 ? (berkembang / totalBumDesPemeringkatan) * 100 : 0;
+  const pctMaju = totalBumDesPemeringkatan > 0 ? (maju / totalBumDesPemeringkatan) * 100 : 0;
 
-  // 4. Circle circumference map (r=35 is 219.9)
+  const statusData = !isBersama ? data.badanHukumStatus?.bumDesa : data.badanHukumStatus?.bumDesaBersama;
+  const totalBumDes = statusData?.total || 0;
+
+  const pct = {
+    pengajuanNama: totalBumDes > 0 ? ((statusData?.pengajuanNama || 0) / totalBumDes) * 100 : 0,
+    perbaikanNama: totalBumDes > 0 ? ((statusData?.perbaikanNama || 0) / totalBumDes) * 100 : 0,
+    namaTerverifikasi: totalBumDes > 0 ? ((statusData?.namaTerverifikasi || 0) / totalBumDes) * 100 : 0,
+    prosesPendaftaran: totalBumDes > 0 ? ((statusData?.prosesPendaftaran || 0) / totalBumDes) * 100 : 0,
+    perbaikanDokumen: totalBumDes > 0 ? ((statusData?.perbaikanDokumen || 0) / totalBumDes) * 100 : 0,
+    terverifikasiDokumen: totalBumDes > 0 ? ((statusData?.terverifikasiDokumen || 0) / totalBumDes) * 100 : 0,
+    kosong: totalBumDes > 0 ? ((statusData?.kosong || 0) / totalBumDes) * 100 : 0,
+  };
+
   const r = 35;
   const circ = 2 * Math.PI * r;
 
-  const lenPerintis = (pctPerintis / 100) * circ;
-  const lenPemula = (pctPemula / 100) * circ;
-  const lenBerkembang = (pctBerkembang / 100) * circ;
-  const lenMaju = (pctMaju / 100) * circ;
+  const len = {
+    pengajuanNama: (pct.pengajuanNama / 100) * circ,
+    perbaikanNama: (pct.perbaikanNama / 100) * circ,
+    namaTerverifikasi: (pct.namaTerverifikasi / 100) * circ,
+    prosesPendaftaran: (pct.prosesPendaftaran / 100) * circ,
+    perbaikanDokumen: (pct.perbaikanDokumen / 100) * circ,
+    terverifikasiDokumen: (pct.terverifikasiDokumen / 100) * circ,
+    kosong: (pct.kosong / 100) * circ,
+  };
 
-  const offsetPerintis = 0;
-  const offsetPemula = -lenPerintis;
-  const offsetBerkembang = -(lenPerintis + lenPemula);
-  const offsetMaju = -(lenPerintis + lenPemula + lenBerkembang);
+  let cumulativeOffset = 0;
+  const getOffset = (segmentLen) => {
+    const o = -cumulativeOffset;
+    cumulativeOffset += segmentLen;
+    return o;
+  };
 
   // 5. Sorted provinces by BUM Desa density (ALL 38 Provinces shown in scroll view!)
   const sortedProvinces = useMemo(() => {
@@ -176,7 +195,7 @@ export default function BUMDesaChart({
                 : "text-slate-500 hover:text-slate-800"
             }`}
           >
-            BERSAMA
+            BUM DESA BERSAMA
           </button>
         </div>
       </div>
@@ -195,46 +214,72 @@ export default function BUMDesaChart({
                 strokeWidth="9"
               />
 
-              {/* Segment 1: Perintis (Red) */}
+              {/* Segment 1: Pengajuan Nama */}
               <circle
                 cx="50"
                 cy="50"
                 r={r}
                 fill="transparent"
-                stroke="#ef4444" 
+                stroke="#94a3b8" 
                 strokeWidth="9"
-                strokeDasharray={`${lenPerintis} ${circ}`}
-                strokeDashoffset={offsetPerintis}
+                strokeDasharray={`${len.pengajuanNama} ${circ}`}
+                strokeDashoffset={getOffset(len.pengajuanNama)}
                 className="transition-all duration-500"
               />
 
-              {/* Segment 2: Pemula (Orange) */}
+              {/* Segment 2: Perbaikan Nama */}
               <circle
                 cx="50"
                 cy="50"
                 r={r}
                 fill="transparent"
-                stroke="#f59e0b" 
+                stroke="#f87171" 
                 strokeWidth="9"
-                strokeDasharray={`${lenPemula} ${circ}`}
-                strokeDashoffset={offsetPemula}
+                strokeDasharray={`${len.perbaikanNama} ${circ}`}
+                strokeDashoffset={getOffset(len.perbaikanNama)}
                 className="transition-all duration-500"
               />
 
-              {/* Segment 3: Berkembang (Sky Blue) */}
+              {/* Segment 3: Nama Terverifikasi */}
               <circle
                 cx="50"
                 cy="50"
                 r={r}
                 fill="transparent"
-                stroke="#06b6d4" 
+                stroke="#fbbf24" 
                 strokeWidth="9"
-                strokeDasharray={`${lenBerkembang} ${circ}`}
-                strokeDashoffset={offsetBerkembang}
+                strokeDasharray={`${len.namaTerverifikasi} ${circ}`}
+                strokeDashoffset={getOffset(len.namaTerverifikasi)}
                 className="transition-all duration-500"
               />
 
-              {/* Segment 4: Maju (Emerald Green) */}
+              {/* Segment 4: Proses Pendaftaran */}
+              <circle
+                cx="50"
+                cy="50"
+                r={r}
+                fill="transparent"
+                stroke="#38bdf8" 
+                strokeWidth="9"
+                strokeDasharray={`${len.prosesPendaftaran} ${circ}`}
+                strokeDashoffset={getOffset(len.prosesPendaftaran)}
+                className="transition-all duration-500"
+              />
+
+              {/* Segment 5: Perbaikan Dokumen */}
+              <circle
+                cx="50"
+                cy="50"
+                r={r}
+                fill="transparent"
+                stroke="#fb923c" 
+                strokeWidth="9"
+                strokeDasharray={`${len.perbaikanDokumen} ${circ}`}
+                strokeDashoffset={getOffset(len.perbaikanDokumen)}
+                className="transition-all duration-500"
+              />
+
+              {/* Segment 6: Terverifikasi Dokumen */}
               <circle
                 cx="50"
                 cy="50"
@@ -242,8 +287,21 @@ export default function BUMDesaChart({
                 fill="transparent"
                 stroke="#10b981" 
                 strokeWidth="9"
-                strokeDasharray={`${lenMaju} ${circ}`}
-                strokeDashoffset={offsetMaju}
+                strokeDasharray={`${len.terverifikasiDokumen} ${circ}`}
+                strokeDashoffset={getOffset(len.terverifikasiDokumen)}
+                className="transition-all duration-500"
+              />
+
+              {/* Segment 7: Kosong */}
+              <circle
+                cx="50"
+                cy="50"
+                r={r}
+                fill="transparent"
+                stroke="#e2e8f0" 
+                strokeWidth="9"
+                strokeDasharray={`${len.kosong} ${circ}`}
+                strokeDashoffset={getOffset(len.kosong)}
                 className="transition-all duration-500"
               />
             </svg>
@@ -260,22 +318,34 @@ export default function BUMDesaChart({
           </div>
 
           {/* Inline labels */}
-          <div className="grid grid-cols-2 gap-x-2 gap-y-1 mt-2 text-[8px] font-bold text-slate-500 w-full text-center">
-            <div className="flex items-center gap-1 justify-center">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
-              <span>Perintis: {pctPerintis.toFixed(0)}%</span>
+          <div className="grid grid-cols-2 gap-x-2 gap-y-1 mt-2 text-[8px] font-bold text-slate-500 w-full text-left ml-2">
+            <div className="flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
+              <span className="truncate">Pengajuan N: {pct.pengajuanNama.toFixed(0)}%</span>
             </div>
-            <div className="flex items-center gap-1 justify-center">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-              <span>Pemula: {pctPemula.toFixed(0)}%</span>
+            <div className="flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />
+              <span className="truncate">Perb. Nama: {pct.perbaikanNama.toFixed(0)}%</span>
             </div>
-            <div className="flex items-center gap-1 justify-center">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 shrink-0" />
-              <span>Kembang: {pctBerkembang.toFixed(0)}%</span>
+            <div className="flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
+              <span className="truncate">Nama Terv: {pct.namaTerverifikasi.toFixed(0)}%</span>
             </div>
-            <div className="flex items-center gap-1 justify-center">
+            <div className="flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-400 shrink-0" />
+              <span className="truncate">Proses Pend: {pct.prosesPendaftaran.toFixed(0)}%</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0" />
+              <span className="truncate">Perb. Dok: {pct.perbaikanDokumen.toFixed(0)}%</span>
+            </div>
+            <div className="flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-              <span>Maju: {pctMaju.toFixed(0)}%</span>
+              <span className="truncate">Terv. Dok: {pct.terverifikasiDokumen.toFixed(0)}%</span>
+            </div>
+            <div className="col-span-2 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-200 shrink-0" />
+              <span className="truncate">Tabel Kosong: {pct.kosong.toFixed(0)}%</span>
             </div>
           </div>
         </div>
@@ -312,6 +382,44 @@ export default function BUMDesaChart({
                 );
               })}
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Breakdown Status Badan Hukum BUM Desa */}
+      <div className="pt-2 border-t border-slate-100">
+        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2 px-1 flex items-center gap-1">
+          <ShieldAlert className="w-3.5 h-3.5 text-[#0c4a9f]" />
+          STATUS BADAN HUKUM {isBersama ? "BUM DESA BERSAMA" : "BUM DESA"} ({data.name})
+        </span>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 p-1">
+          <div className="bg-slate-50 rounded-lg p-2 border border-slate-150-inset">
+             <div className="flex justify-between items-baseline text-[8.5px] text-slate-500 font-bold mb-1"><span className="text-slate-600">PENGAJUAN NAMA</span><span className="font-mono text-[9px] text-slate-800">{formatIndoNumber(statusData?.pengajuanNama || 0)}</span></div>
+             <div className="bg-slate-200 h-1 rounded-full overflow-hidden"><div className="bg-slate-400 h-full rounded-full" style={{ width: `${pct.pengajuanNama}%` }} /></div>
+          </div>
+          <div className="bg-slate-50 rounded-lg p-2 border border-slate-150-inset">
+             <div className="flex justify-between items-baseline text-[8.5px] text-slate-500 font-bold mb-1"><span className="text-red-500 truncate mr-1">PERB. NAMA</span><span className="font-mono text-[9px] text-slate-800">{formatIndoNumber(statusData?.perbaikanNama || 0)}</span></div>
+             <div className="bg-slate-200 h-1 rounded-full overflow-hidden"><div className="bg-red-400 h-full rounded-full" style={{ width: `${pct.perbaikanNama}%` }} /></div>
+          </div>
+          <div className="bg-slate-50 rounded-lg p-2 border border-slate-150-inset">
+             <div className="flex justify-between items-baseline text-[8.5px] text-slate-500 font-bold mb-1"><span className="text-amber-600 truncate mr-1">NAMA TERV.</span><span className="font-mono text-[9px] text-slate-800">{formatIndoNumber(statusData?.namaTerverifikasi || 0)}</span></div>
+             <div className="bg-slate-200 h-1 rounded-full overflow-hidden"><div className="bg-amber-400 h-full rounded-full" style={{ width: `${pct.namaTerverifikasi}%` }} /></div>
+          </div>
+          <div className="bg-slate-50 rounded-lg p-2 border border-slate-150-inset">
+             <div className="flex justify-between items-baseline text-[8.5px] text-slate-500 font-bold mb-1"><span className="text-sky-600 truncate mr-1">PROS. PENDAF.</span><span className="font-mono text-[9px] text-slate-800">{formatIndoNumber(statusData?.prosesPendaftaran || 0)}</span></div>
+             <div className="bg-slate-200 h-1 rounded-full overflow-hidden"><div className="bg-sky-400 h-full rounded-full" style={{ width: `${pct.prosesPendaftaran}%` }} /></div>
+          </div>
+          <div className="bg-slate-50 rounded-lg p-2 border border-slate-150-inset">
+             <div className="flex justify-between items-baseline text-[8.5px] text-slate-500 font-bold mb-1"><span className="text-orange-600 truncate mr-1">PERB. DOK.</span><span className="font-mono text-[9px] text-slate-800">{formatIndoNumber(statusData?.perbaikanDokumen || 0)}</span></div>
+             <div className="bg-slate-200 h-1 rounded-full overflow-hidden"><div className="bg-orange-400 h-full rounded-full" style={{ width: `${pct.perbaikanDokumen}%` }} /></div>
+          </div>
+          <div className="bg-slate-50 rounded-lg p-2 border border-slate-150-inset">
+             <div className="flex justify-between items-baseline text-[8.5px] text-slate-500 font-bold mb-1"><span className="text-emerald-600 truncate mr-1">TERV. DOK.</span><span className="font-mono text-[9px] text-slate-800">{formatIndoNumber(statusData?.terverifikasiDokumen || 0)}</span></div>
+             <div className="bg-slate-200 h-1 rounded-full overflow-hidden"><div className="bg-emerald-500 h-full rounded-full" style={{ width: `${pct.terverifikasiDokumen}%` }} /></div>
+          </div>
+          <div className="col-span-2 bg-slate-50 rounded-lg p-2 border border-slate-150-inset">
+             <div className="flex justify-between items-baseline text-[8.5px] text-slate-500 font-bold mb-1"><span className="text-slate-600 truncate mr-1">Tabel Kosong / Tidak Diketahui</span><span className="font-mono text-[9px] text-slate-800">{formatIndoNumber(statusData?.kosong || 0)}</span></div>
+             <div className="bg-slate-200 h-1 rounded-full overflow-hidden"><div className="bg-slate-300 h-full rounded-full" style={{ width: `${pct.kosong}%` }} /></div>
           </div>
         </div>
       </div>
