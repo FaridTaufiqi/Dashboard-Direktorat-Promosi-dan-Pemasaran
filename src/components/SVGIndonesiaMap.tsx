@@ -303,8 +303,8 @@ export default function SVGIndonesiaMap({
       </div>
 
       {/* Main Grid: Leaflet Map Container */}
-      <div className="relative w-full h-[320px] rounded-xl overflow-hidden shadow-sm border border-slate-200 z-10 bg-slate-100">
-        <div ref={mapContainer} className="w-full h-full" style={{ minHeight: "320px" }} />
+      <div className="relative w-full h-[460px] rounded-xl overflow-hidden shadow-sm border border-slate-200 z-10 bg-slate-100 flex-1">
+        <div ref={mapContainer} className="w-full h-full min-h-[460px]" />
         
         {/* Floating heat map status label */}
         <div className="absolute bottom-3 left-3 z-1001 bg-white/95 backdrop-blur-xs px-3 py-2 rounded-xl shadow-md border border-slate-100 max-w-[200px] select-none">

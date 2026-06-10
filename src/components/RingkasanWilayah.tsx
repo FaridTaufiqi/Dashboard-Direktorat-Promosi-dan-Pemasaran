@@ -50,7 +50,7 @@ export default function RingkasanWilayah({
         </div>
 
         {/* Scrollable Table Area */}
-        <div className="overflow-x-auto max-h-[340px] overflow-y-auto pr-1 scrollbar-thin">
+        <div className="flex-1 overflow-x-auto min-h-[320px] max-h-[460px] overflow-y-auto pr-1 scrollbar-thin mt-2">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-200 text-[10px] font-bold text-slate-400 uppercase tracking-wider sticky top-0 bg-white z-10">

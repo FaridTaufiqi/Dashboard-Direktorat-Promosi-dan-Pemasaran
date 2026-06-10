@@ -10,7 +10,8 @@ import {
   Info,
   Menu,
   X,
-  Table
+  Table,
+  Plane
 } from "lucide-react";
 
 interface SidebarProps {
@@ -34,6 +35,7 @@ export default function Sidebar({
     { id: "pemeringkatan", label: "Pemeringkatan", icon: Trophy },
     { id: "pades", label: "Bagi Hasil PADes", icon: Coins },
     { id: "nib", label: "NIB & Program", icon: FileCheck2 },
+    { id: "desa-ekspor", label: "Desa Ekspor", icon: Plane },
     { id: "keterangan", label: "Keterangan", icon: Info },
   ];
 

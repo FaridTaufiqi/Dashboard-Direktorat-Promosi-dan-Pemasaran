@@ -113,6 +113,23 @@ export interface ProvinceData {
     berkembang?: number;
     maju?: number;
   };
+
+  // Desa Ekspor
+  desaEksporData?: {
+    klusterisasi: {
+      klaster1: number;
+      klaster2: number;
+      sentraIkm: number;
+      kosong: number;
+      total: number;
+    };
+    sektorKomoditas: {
+      [sektor: string]: number;
+    };
+    komoditas: {
+      [komoditas: string]: number;
+    };
+  };
 }
 
 export interface DashboardFilters {

@@ -102,8 +102,8 @@ export default function IndeksDesaRadar({ data, tahun }: IndeksDesaRadarProps) {
       {/* Main Stack: Centered Radar on top, list details at the bottom */}
       <div className="flex flex-col items-center my-4 space-y-4">
         {/* Centered Radar Chart with strict size container */}
-        <div className="flex justify-center items-center w-[220px] h-[190px] relative select-none">
-          <svg width={width} height={height} className="overflow-visible">
+        <div className="flex justify-center items-center w-[300px] h-[300px] sm:w-[260px] sm:h-[260px] relative select-none">
+          <svg viewBox="0 0 220 220" className="overflow-visible w-full h-full max-w-[280px]">
             {/* Grid concentric shapes */}
             {finalGridPaths.map((path, idx) => (
               <path

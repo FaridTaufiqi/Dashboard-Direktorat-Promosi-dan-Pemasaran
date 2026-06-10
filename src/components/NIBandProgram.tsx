@@ -88,7 +88,7 @@ export default function NIBandProgram({ data, tahun }: NIBandProgramProps) {
         </div>
 
         {/* Bento Grid Sub-items */}
-        <div className="grid grid-cols-2 gap-3.5 my-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 my-4">
           {/* Item 1: Desa Ekspor */}
           <div className="bg-slate-50/50 hover:bg-slate-50 border border-slate-100 p-3 rounded-xl flex items-center gap-3 transition-colors">
             <div className="p-2 rounded-lg bg-teal-50 text-teal-600">

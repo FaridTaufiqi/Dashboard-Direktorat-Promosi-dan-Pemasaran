@@ -23,6 +23,7 @@ import TabPemeringkatan from "./components/tabs/TabPemeringkatan";
 import TabPADes from "./components/tabs/TabPADes";
 import TabNIB from "./components/tabs/TabNIB";
 import TabBumDesaBersama from "./components/tabs/TabBumDesaBersama";
+import TabDesaEkspor from "./components/tabs/TabDesaEkspor";
 import TabKeterangan from "./components/tabs/TabKeterangan";
 
 import { provinceDataList } from "./data/mockData";
@@ -451,6 +452,8 @@ export default function App() {
           )}
 
           {activeTab === "nib" && <TabNIB filters={filters} activeData={activeData} />}
+
+          {activeTab === "desa-ekspor" && <TabDesaEkspor data={activeData} />}
 
           {activeTab === "bumdes-bersama" && (
             <TabBumDesaBersama

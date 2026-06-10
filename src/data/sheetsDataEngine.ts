@@ -126,6 +126,9 @@ export interface RawVillageRow {
   aspekManfaatBersama: number; // Column AS
   nilaiPemeringkatanBumDesa: number; // Column Z
   nilaiPemeringkatanBumDesaBersama: number; // Column AT
+  klusterisasiDesaBisaEkspor?: string; // Column AW
+  sektorKomoditas?: string; // Column AX
+  komoditas?: string; // Column AY
 }
 
 export interface AggregatedDashboardData {
@@ -144,6 +147,58 @@ export function isValidNib(val: string): boolean {
   if (!val) return false;
   const cleaned = val.trim().toUpperCase();
   return cleaned !== "" && cleaned !== "-" && cleaned !== "0" && cleaned !== "NIHIL" && cleaned !== "TIDAK ADA" && !cleaned.includes("TIDAK ADA") && !cleaned.includes("BELUM");
+}
+
+function aggregateDesaEkspor(rows: RawVillageRow[]) {
+  const klusterisasi = {
+    klaster1: 0,
+    klaster2: 0,
+    sentraIkm: 0,
+    kosong: 0,
+    total: 0
+  };
+  const sektorKomoditas: { [key: string]: number } = {};
+  const komoditas: { [key: string]: number } = {};
+
+  for (const row of rows) {
+    if (!row.klusterisasiDesaBisaEkspor && !row.sektorKomoditas && !row.komoditas) {
+      continue;
+    }
+    
+    // Klusterisasi
+    const klus = (row.klusterisasiDesaBisaEkspor || "").trim().toUpperCase();
+    if (klus) klusterisasi.total++;
+    
+    if (klus.includes("KLASTER 1")) klusterisasi.klaster1++;
+    else if (klus.includes("KLASTER 2")) klusterisasi.klaster2++;
+    else if (klus.includes("SENTRA IKM")) klusterisasi.sentraIkm++;
+    else if (klus === "" || klus === "-") klusterisasi.kosong++;
+
+    // Sektor Komoditas
+    const sektor = (row.sektorKomoditas || "").trim();
+    if (sektor && sektor !== "-") {
+      // Could be comma separated
+      const parts = sektor.split(/[,\/]/).map(s => s.trim()).filter(s => s.length > 0);
+      for (const p of parts) {
+        sektorKomoditas[p] = (sektorKomoditas[p] || 0) + 1;
+      }
+    }
+
+    // Komoditas
+    const kom = (row.komoditas || "").trim();
+    if (kom && kom !== "-") {
+      const parts = kom.split(/[,\/]/).map(k => k.trim()).filter(k => k.length > 0);
+      for (const p of parts) {
+        komoditas[p] = (komoditas[p] || 0) + 1;
+      }
+    }
+  }
+
+  return {
+    klusterisasi,
+    sektorKomoditas,
+    komoditas
+  };
 }
 
 export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<AggregatedDashboardData> {
@@ -282,6 +337,10 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
   const idxNilaiPemeringkatanBumDesaBersama = headers.indexOf("NILAI PEMERINGKATAN BERSAMA") !== -1 ? headers.indexOf("NILAI PEMERINGKATAN BERSAMA") : 45; // Column AT
 
   const idxPemeringkatanBumDesaBersama = headers.indexOf("PEMERINGKATAN BUM DESA BERSAMA") !== -1 ? headers.indexOf("PEMERINGKATAN BUM DESA BERSAMA") : 46; // Column AU
+
+  const idxKlusterisasi = headers.indexOf("KLUSTERISASI DESA BISA EKSPOR") !== -1 ? headers.indexOf("KLUSTERISASI DESA BISA EKSPOR") : 48; // Column AW
+  const idxSektorKomoditas = headers.indexOf("SEKTOR KOMODITAS") !== -1 ? headers.indexOf("SEKTOR KOMODITAS") : 49; // Column AX
+  const idxKomoditas = headers.indexOf("KOMODITAS") !== -1 ? headers.indexOf("KOMODITAS") : 50; // Column AY
 
   // BUM DESA and BUM DESA BERSAMA list names
   const idxBumDesaName = headers.indexOf("BUM DESA") !== -1
@@ -423,7 +482,10 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
       aspekAdministrasiBersama: idxAspekAdministrasiBersama !== -1 ? cleanScore(cells[idxAspekAdministrasiBersama]) : 0,
       aspekManfaatBersama: idxAspekManfaatBersama !== -1 ? cleanScore(cells[idxAspekManfaatBersama]) : 0,
       nilaiPemeringkatanBumDesa: idxNilaiPemeringkatanBumDesa !== -1 ? cleanScore(cells[idxNilaiPemeringkatanBumDesa]) : 0,
-      nilaiPemeringkatanBumDesaBersama: idxNilaiPemeringkatanBumDesaBersama !== -1 ? cleanScore(cells[idxNilaiPemeringkatanBumDesaBersama]) : 0
+      nilaiPemeringkatanBumDesaBersama: idxNilaiPemeringkatanBumDesaBersama !== -1 ? cleanScore(cells[idxNilaiPemeringkatanBumDesaBersama]) : 0,
+      klusterisasiDesaBisaEkspor: idxKlusterisasi !== -1 ? (cells[idxKlusterisasi] || "").trim() : "",
+      sektorKomoditas: idxSektorKomoditas !== -1 ? (cells[idxSektorKomoditas] || "").trim() : "",
+      komoditas: idxKomoditas !== -1 ? (cells[idxKomoditas] || "").trim() : ""
     };
 
     rawRows.push(row);
@@ -741,7 +803,8 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
         pemula: bStatusBersama.pemula,
         berkembang: bStatusBersama.berkembang,
         maju: bStatusBersama.maju
-      }
+      },
+      desaEksporData: aggregateDesaEkspor(provRows)
     };
   });
 
@@ -914,7 +977,8 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
       pemula: parsedProvinces.reduce((sum, p) => sum + (p.bumDesaBersama.pemula || 0), 0),
       berkembang: parsedProvinces.reduce((sum, p) => sum + (p.bumDesaBersama.berkembang || 0), 0),
       maju: parsedProvinces.reduce((sum, p) => sum + (p.bumDesaBersama.maju || 0), 0)
-    }
+    },
+    desaEksporData: aggregateDesaEkspor(rawRows)
   };
 
   return {
@@ -1194,6 +1258,7 @@ export function getFilteredSheetsData(
       pemula: bStatusBersama.pemula,
       berkembang: bStatusBersama.berkembang,
       maju: bStatusBersama.maju
-    }
+    },
+    desaEksporData: aggregateDesaEkspor(scopeRows)
   };
 }
