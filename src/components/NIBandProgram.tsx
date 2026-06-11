@@ -76,82 +76,83 @@ export default function NIBandProgram({ data, tahun }: NIBandProgramProps) {
         </div>
       </div>
 
-      {/* CARD 2: PROGRAM & INOVASI DESA - 8 Columns */}
+      {/* CARD 2: KLUSTERISASI DESA BISA EKSPOR - 8 Columns */}
       <div className="lg:col-span-8 bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col justify-between hover:shadow-xs transition-shadow">
         <div>
           <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest leading-none mb-1">
-            PROGRAM & INOVASI DESA
+            KLUSTERISASI DESA BISA EKSPOR
           </h4>
           <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider mt-1">
-            Klasifikasi desa dalam inovasi strategis {tahun}
+            Status Ekspor dan Sentra IKM Berdasarkan Klasifikasi Desa {tahun}
           </p>
         </div>
 
         {/* Bento Grid Sub-items */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 my-4">
-          {/* Item 1: Desa Ekspor */}
+          {/* Item 1: Klaster 1 */}
           <div className="bg-slate-50/50 hover:bg-slate-50 border border-slate-100 p-3 rounded-xl flex items-center gap-3 transition-colors">
             <div className="p-2 rounded-lg bg-teal-50 text-teal-600">
               <Globe className="w-5 h-5" />
             </div>
             <div className="min-w-0">
               <span className="text-[15px] font-extrabold text-slate-800 block font-mono leading-none">
-                {formatIndoNumber(prog.desaEkspor)}
+                {formatIndoNumber(data.desaEksporData?.klusterisasi?.klaster1 || 0)}
               </span>
               <span className="text-[9px] font-bold text-slate-400 uppercase block mt-1 truncate">
-                Desa Ekspor
+                KLASTER 1
               </span>
             </div>
           </div>
 
-          {/* Item 2: Desa BRILian */}
+          {/* Item 2: Klaster 2 */}
           <div className="bg-slate-50/50 hover:bg-slate-50 border border-slate-100 p-3 rounded-xl flex items-center gap-3 transition-colors">
             <div className="p-2 rounded-lg bg-blue-50 text-blue-600">
-              <Sparkles className="w-5 h-5" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-[15px] font-extrabold text-slate-800 block font-mono leading-none">
-                {formatIndoNumber(prog.desaBrilian)}
-              </span>
-              <span className="text-[9px] font-bold text-slate-400 uppercase block mt-1 truncate">
-                Desa BRILian
-              </span>
-            </div>
-          </div>
-
-          {/* Item 3: MBG 2025 */}
-          <div className="bg-slate-50/50 hover:bg-slate-50 border border-slate-100 p-3 rounded-xl flex items-center gap-3 transition-colors">
-            <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600">
-              <Heart className="w-5 h-5 fill-emerald-100" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-[15px] font-extrabold text-slate-800 block font-mono leading-none">
-                {formatIndoNumber(prog.mbg2025)}
-              </span>
-              <span className="text-[9px] font-bold text-slate-400 uppercase block mt-1 truncate">
-                MBG 2025 (Pilar 1)
-              </span>
-            </div>
-          </div>
-
-          {/* Item 4: MBG 2026 */}
-          <div className="bg-slate-50/50 hover:bg-slate-50 border border-slate-100 p-3 rounded-xl flex items-center gap-3 transition-colors">
-            <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600">
               <Activity className="w-5 h-5" />
             </div>
             <div className="min-w-0">
               <span className="text-[15px] font-extrabold text-slate-800 block font-mono leading-none">
-                {formatIndoNumber(prog.mbg2026)}
+                {formatIndoNumber(data.desaEksporData?.klusterisasi?.klaster2 || 0)}
               </span>
               <span className="text-[9px] font-bold text-slate-400 uppercase block mt-1 truncate">
-                MBG 2026 (Pilar 2)
+                KLASTER 2
+              </span>
+            </div>
+          </div>
+
+          {/* Item 3: Sentra IKM */}
+          <div className="bg-slate-50/50 hover:bg-slate-50 border border-slate-100 p-3 rounded-xl flex items-center gap-3 transition-colors">
+            <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600">
+              <UsersRound className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <span className="text-[15px] font-extrabold text-slate-800 block font-mono leading-none">
+                {formatIndoNumber(data.desaEksporData?.klusterisasi?.sentraIkm || 0)}
+              </span>
+              <span className="text-[9px] font-bold text-slate-400 uppercase block mt-1 truncate">
+                SENTRA IKM
+              </span>
+            </div>
+          </div>
+
+          {/* Item 4: Total */}
+          <div className="bg-slate-50/50 hover:bg-slate-50 border border-slate-100 p-3 rounded-xl flex items-center gap-3 transition-colors">
+            <div className="p-2 rounded-lg bg-slate-100 text-slate-600">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <span className="text-[15px] font-extrabold text-slate-800 block font-mono leading-none">
+                {formatIndoNumber(data.desaEksporData?.klusterisasi?.total || 0)}
+              </span>
+              <span className="text-[9px] font-bold text-slate-400 uppercase block mt-1 truncate">
+                TOTAL DATA
               </span>
             </div>
           </div>
         </div>
 
-        <div className="text-[10px] text-slate-400 font-semibold pt-2 border-t border-slate-100">
-          MBG: Program Makanan Bergizi Gratis Berbasis BUM Desa.
+        <div className="text-[10px] text-slate-400 font-semibold pt-2 border-t border-slate-100 grid md:grid-cols-2 gap-1">
+          <div><span className="text-slate-500 font-bold">KLASTER 1:</span> Siap Ekspor / Skala Kecil.</div>
+          <div><span className="text-slate-500 font-bold">KLASTER 2:</span> Komoditas Menonjol / Perlu Infrastruktur.</div>
         </div>
       </div>
     </div>
