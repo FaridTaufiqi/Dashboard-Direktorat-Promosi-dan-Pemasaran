@@ -7,6 +7,7 @@ import {
   Sparkles,
   RefreshCw,
 } from "lucide-react";
+import { Analytics } from "@vercel/analytics/react";
 import Sidebar from "./components/Sidebar";
 import KPICards from "./components/KPICards";
 import SheetsSyncPanel from "./components/SheetsSyncPanel";
@@ -116,7 +117,9 @@ export default function App() {
   const desaList = getDynamicDesaList(useGoogleSheets, sheetsData);
 
   return (
-    <div className="min-h-screen flex text-slate-800 bg-white antialiased">
+    <>
+      <Analytics />
+      <div className="min-h-screen flex text-slate-800 bg-white antialiased">
       {/* Sidebar navigation */}
       <Sidebar
         activeTab={activeTab}
@@ -479,5 +482,6 @@ export default function App() {
         </footer>
       </main>
     </div>
+    </>
   );
 }
