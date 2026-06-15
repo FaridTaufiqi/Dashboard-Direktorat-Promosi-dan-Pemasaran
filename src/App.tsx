@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Menu,
   Download,
@@ -57,15 +57,15 @@ export default function App() {
   const isAllProvinces = filters.provinsi === "ALL";
   const years = ["2022", "2023", "2024", "2025", "2026"];
 
-  const handleSelectProvince = (provId: string) => {
-    setFilters({
-      ...filters,
+  const handleSelectProvince = React.useCallback((provId: string) => {
+    setFilters(prev => ({
+      ...prev,
       provinsi: provId,
       kabupaten: "ALL",
       kecamatan: "ALL",
       desa: "ALL",
-    });
-  };
+    }));
+  }, [setFilters]);
 
   const handleDownloadReport = () => {
     const csvContent =
@@ -111,9 +111,88 @@ export default function App() {
     setTimeout(() => setDownloadSuccess(false), 3000);
   };
 
-  const kabList = getDynamicKabupatenList(useGoogleSheets, sheetsData);
-  const kecList = getDynamicKecamatanList(useGoogleSheets, sheetsData);
-  const desaList = getDynamicDesaList(useGoogleSheets, sheetsData);
+  const kabList = useMemo(() => getDynamicKabupatenList(useGoogleSheets, sheetsData), [getDynamicKabupatenList, useGoogleSheets, sheetsData]);
+  const kecList = useMemo(() => getDynamicKecamatanList(useGoogleSheets, sheetsData), [getDynamicKecamatanList, useGoogleSheets, sheetsData]);
+  const desaList = useMemo(() => getDynamicDesaList(useGoogleSheets, sheetsData), [getDynamicDesaList, useGoogleSheets, sheetsData]);
+
+  const renderedTabSumberData = useMemo(() => (
+    <SheetsSyncPanel
+      useGoogleSheets={useGoogleSheets}
+      setUseGoogleSheets={setUseGoogleSheets}
+      spreadsheetUrl={spreadsheetUrl}
+      setSpreadsheetUrl={setSpreadsheetUrl}
+      isSheetsLoading={isSheetsLoading}
+      sheetsError={sheetsError}
+      sheetsData={sheetsData}
+      onTriggerSync={() => triggerSync()}
+    />
+  ), [useGoogleSheets, spreadsheetUrl, isSheetsLoading, sheetsError, sheetsData, setUseGoogleSheets, setSpreadsheetUrl, triggerSync]);
+
+  const renderedTabRingkasan = useMemo(() => (
+    <TabRingkasan
+      filters={filters}
+      activeData={activeData}
+      handleSelectProvince={handleSelectProvince}
+      provinceList={sheetsData?.provinces || provinceDataList}
+    />
+  ), [filters, activeData, handleSelectProvince, sheetsData]);
+
+  const renderedTabIndeksDesa = useMemo(() => (
+    <TabIndeksDesa
+      filters={filters}
+      activeData={activeData}
+      handleSelectProvince={handleSelectProvince}
+      provinceList={sheetsData?.provinces || provinceDataList}
+    />
+  ), [filters, activeData, handleSelectProvince, sheetsData]);
+
+  const renderedTabBumDesa = useMemo(() => (
+    <TabBumDesa
+      filters={filters}
+      activeData={activeData}
+      handleSelectProvince={handleSelectProvince}
+      provinceList={sheetsData?.provinces || provinceDataList}
+    />
+  ), [filters, activeData, handleSelectProvince, sheetsData]);
+
+  const renderedTabPemeringkatan = useMemo(() => (
+    <TabPemeringkatan
+      filters={filters}
+      activeData={activeData}
+      handleSelectProvince={handleSelectProvince}
+      provinceList={sheetsData?.provinces || provinceDataList}
+    />
+  ), [filters, activeData, handleSelectProvince, sheetsData]);
+
+  const renderedTabPADes = useMemo(() => (
+    <TabPADes
+      filters={filters}
+      activeData={activeData}
+      handleSelectProvince={handleSelectProvince}
+      provinceList={sheetsData?.provinces || provinceDataList}
+    />
+  ), [filters, activeData, handleSelectProvince, sheetsData]);
+
+  const renderedTabNIB = useMemo(() => (
+    <TabNIB filters={filters} activeData={activeData} />
+  ), [filters, activeData]);
+
+  const renderedTabDesaEkspor = useMemo(() => (
+    <TabDesaEkspor data={activeData} />
+  ), [activeData]);
+
+  const renderedTabBumDesaBersama = useMemo(() => (
+    <TabBumDesaBersama
+      filters={filters}
+      activeData={activeData}
+      handleSelectProvince={handleSelectProvince}
+      provinceList={sheetsData?.provinces || provinceDataList}
+    />
+  ), [filters, activeData, handleSelectProvince, sheetsData]);
+
+  const renderedTabKeterangan = useMemo(() => (
+    <TabKeterangan />
+  ), []);
 
   return (
     <div className="min-h-screen flex text-slate-800 bg-white antialiased">
@@ -393,78 +472,16 @@ export default function App() {
           <KPICards data={activeData} tahun={filters.tahun} isAllProvinces={isAllProvinces} />
 
           {/* MAIN TAB CONTENT CONTROLLING */}
-          {activeTab === "sumber-data" && (
-            <SheetsSyncPanel
-              useGoogleSheets={useGoogleSheets}
-              setUseGoogleSheets={setUseGoogleSheets}
-              spreadsheetUrl={spreadsheetUrl}
-              setSpreadsheetUrl={setSpreadsheetUrl}
-              isSheetsLoading={isSheetsLoading}
-              sheetsError={sheetsError}
-              sheetsData={sheetsData}
-              onTriggerSync={() => triggerSync()}
-            />
-          )}
-
-          {activeTab === "ringkasan" && (
-            <TabRingkasan
-              filters={filters}
-              activeData={activeData}
-              handleSelectProvince={handleSelectProvince}
-              provinceList={sheetsData?.provinces || provinceDataList}
-            />
-          )}
-
-          {activeTab === "indeks-desa" && (
-            <TabIndeksDesa
-              filters={filters}
-              activeData={activeData}
-              handleSelectProvince={handleSelectProvince}
-              provinceList={sheetsData?.provinces || provinceDataList}
-            />
-          )}
-
-          {activeTab === "bum-desa" && (
-            <TabBumDesa
-              filters={filters}
-              activeData={activeData}
-              handleSelectProvince={handleSelectProvince}
-              provinceList={sheetsData?.provinces || provinceDataList}
-            />
-          )}
-
-          {activeTab === "pemeringkatan" && (
-            <TabPemeringkatan
-              filters={filters}
-              activeData={activeData}
-              handleSelectProvince={handleSelectProvince}
-              provinceList={sheetsData?.provinces || provinceDataList}
-            />
-          )}
-
-          {activeTab === "pades" && (
-            <TabPADes
-              filters={filters}
-              activeData={activeData}
-              handleSelectProvince={handleSelectProvince}
-              provinceList={sheetsData?.provinces || provinceDataList}
-            />
-          )}
-
-          {activeTab === "nib" && <TabNIB filters={filters} activeData={activeData} />}
-
-          {activeTab === "desa-ekspor" && <TabDesaEkspor data={activeData} />}
-
-          {activeTab === "bumdes-bersama" && (
-            <TabBumDesaBersama
-              filters={filters}
-              activeData={activeData}
-              handleSelectProvince={handleSelectProvince}
-              provinceList={sheetsData?.provinces || provinceDataList}
-            />
-          )}
-
-          {activeTab === "keterangan" && <TabKeterangan />}
+          {activeTab === "sumber-data" && renderedTabSumberData}
+          {activeTab === "ringkasan" && renderedTabRingkasan}
+          {activeTab === "indeks-desa" && renderedTabIndeksDesa}
+          {activeTab === "bum-desa" && renderedTabBumDesa}
+          {activeTab === "pemeringkatan" && renderedTabPemeringkatan}
+          {activeTab === "pades" && renderedTabPADes}
+          {activeTab === "nib" && renderedTabNIB}
+          {activeTab === "desa-ekspor" && renderedTabDesaEkspor}
+          {activeTab === "bumdes-bersama" && renderedTabBumDesaBersama}
+          {activeTab === "keterangan" && renderedTabKeterangan}
         </div>
 
         {/* Humid Footer Credits */}

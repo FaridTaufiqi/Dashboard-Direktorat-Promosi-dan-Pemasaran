@@ -25,7 +25,7 @@ export function formatIndoPrecise(num: number): string {
   return val.toFixed(len).replace(".", ",");
 }
 
-export default function KPICards({ data, tahun, isAllProvinces }: KPICardsProps) {
+const KPICards = React.memo(function KPICards({ data, tahun, isAllProvinces }: KPICardsProps) {
   // Extract values
   const provValue = isAllProvinces ? "38" : "1";
   const kabValue = formatIndoNumber(data.kabupatenCount);
@@ -188,4 +188,6 @@ export default function KPICards({ data, tahun, isAllProvinces }: KPICardsProps)
       })}
     </div>
   );
-}
+});
+
+export default KPICards;

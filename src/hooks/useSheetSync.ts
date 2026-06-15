@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { DashboardFilters } from "../types";
 import { fetchAndParseGoogleSheet, getFilteredSheetsData, AggregatedDashboardData } from "../data/sheetsDataEngine";
 import { getFilteredData } from "../data/mockData";
@@ -46,18 +46,20 @@ export function useSheetSync(filters: DashboardFilters): UseSheetSyncReturn {
     triggerSync();
   }, []);
 
-  // Determine active data structure
-  let activeData = getFilteredData(filters);
-  if (useGoogleSheets && sheetsData) {
-    if (filters.provinsi === "ALL") {
-      activeData = sheetsData.national;
-    } else {
-      const foundProv = sheetsData.provinces.find((p) => p.id === filters.provinsi);
-      if (foundProv) {
-        activeData = getFilteredSheetsData(foundProv, filters, sheetsData.rawRows);
+  const activeData = useMemo(() => {
+    let result = getFilteredData(filters);
+    if (useGoogleSheets && sheetsData) {
+      if (filters.provinsi === "ALL") {
+        result = sheetsData.national;
+      } else {
+        const foundProv = sheetsData.provinces.find((p) => p.id === filters.provinsi);
+        if (foundProv) {
+          result = getFilteredSheetsData(foundProv, filters, sheetsData.rawRows);
+        }
       }
     }
-  }
+    return result;
+  }, [filters, useGoogleSheets, sheetsData]);
 
   return {
     useGoogleSheets,

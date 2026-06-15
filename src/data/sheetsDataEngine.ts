@@ -991,6 +991,17 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
 /**
  * Filter aggregated/raw spreadsheet rows dynamically for custom scopes
  */
+export const pIdMapping: Record<string, string> = {
+  "11": "ACEH", "12": "SUMATERA UTARA", "13": "SUMATERA BARAT", "14": "RIAU", "15": "JAMBI",
+  "16": "SUMATERA SELATAN", "17": "BENGKULU", "18": "LAMPUNG", "19": "KEPULAUAN BANGKA BELITUNG", "21": "KEPULAUAN RIAU",
+  "31": "DKI JAKARTA", "32": "JAWA BARAT", "33": "JAWA TENGAH", "34": "DI YOGYAKARTA", "35": "JAWA TIMUR",
+  "36": "BANTEN", "51": "BALI", "52": "NUSA TENGGARA BARAT", "53": "NUSA TENGGARA TIMUR", "61": "KALIMANTAN BARAT",
+  "62": "KALIMANTAN TENGAH", "63": "KALIMANTAN SELATAN", "64": "KALIMANTAN TIMUR", "65": "KALIMANTAN UTARA", "71": "SULAWESI UTARA",
+  "72": "SULAWESI TENGAH", "73": "SULAWESI SELATAN", "74": "SULAWESI TENGGARA", "75": "GORONTALO", "76": "SULAWESI BARAT",
+  "81": "MALUKU", "82": "MALUKU UTARA", "91": "PAPUA BARAT", "92": "PAPUA", "93": "PAPUA SELATAN",
+  "94": "PAPUA TENGAH", "95": "PAPUA PEGUNUNGAN", "96": "PAPUA BARAT DAYA"
+};
+
 export function getFilteredSheetsData(
   activeData: ProvinceData,
   filters: { provinsi: string; kabupaten: string; kecamatan: string; desa: string },
@@ -998,20 +1009,10 @@ export function getFilteredSheetsData(
 ): ProvinceData {
   if (filters.provinsi === "ALL") return activeData;
 
+  const provNameRequired = pIdMapping[filters.provinsi];
+
   const scopeRows = rawRows.filter(r => {
-    const pIdMapping = {
-      "11": "ACEH", "12": "SUMATERA UTARA", "13": "SUMATERA BARAT", "14": "RIAU", "15": "JAMBI",
-      "16": "SUMATERA SELATAN", "17": "BENGKULU", "18": "LAMPUNG", "19": "KEPULAUAN BANGKA BELITUNG", "21": "KEPULAUAN RIAU",
-      "31": "DKI JAKARTA", "32": "JAWA BARAT", "33": "JAWA TENGAH", "34": "DI YOGYAKARTA", "35": "JAWA TIMUR",
-      "36": "BANTEN", "51": "BALI", "52": "NUSA TENGGARA BARAT", "53": "NUSA TENGGARA TIMUR", "61": "KALIMANTAN BARAT",
-      "62": "KALIMANTAN TENGAH", "63": "KALIMANTAN SELATAN", "64": "KALIMANTAN TIMUR", "65": "KALIMANTAN UTARA", "71": "SULAWESI UTARA",
-      "72": "SULAWESI TENGAH", "73": "SULAWESI SELATAN", "74": "SULAWESI TENGGARA", "75": "GORONTALO", "76": "SULAWESI BARAT",
-      "81": "MALUKU", "82": "MALUKU UTARA", "91": "PAPUA BARAT", "92": "PAPUA", "93": "PAPUA SELATAN",
-      "94": "PAPUA TENGAH", "95": "PAPUA PEGUNUNGAN", "96": "PAPUA BARAT DAYA"
-    };
-    
     // Match Province ID
-    const provNameRequired = pIdMapping[filters.provinsi as keyof typeof pIdMapping];
     if (provNameRequired && r.provinsi !== provNameRequired) return false;
 
     // Match Kabupaten
