@@ -99,11 +99,11 @@ export default function IndeksDesaRadar({ data, tahun }: IndeksDesaRadarProps) {
         </p>
       </div>
 
-      {/* Main Stack: Centered Radar on top, list details at the bottom */}
-      <div className="flex flex-col items-center my-4 flex-1 justify-center space-y-6">
-        {/* Centered Radar Chart with strict size container */}
-        <div className="flex justify-center items-center w-[220px] h-[220px] lg:w-[240px] lg:h-[240px] relative select-none">
-          <svg viewBox="0 0 220 220" className="overflow-visible w-full h-full max-w-[280px]">
+      {/* Main Stack: Centered Radar on left, list details on right for full width */}
+      <div className="flex flex-col lg:flex-row items-center justify-between my-4 flex-1 gap-10 lg:pl-4 lg:pr-10">
+        {/* Radar Chart with scaling for widescreen */}
+        <div className="flex justify-center flex-1 items-center w-full max-w-[360px] h-auto aspect-square relative select-none shrink-0">
+          <svg viewBox="0 0 220 220" className="overflow-visible w-full h-full">
             {/* Grid concentric shapes */}
             {finalGridPaths.map((path, idx) => (
               <path
@@ -200,13 +200,13 @@ export default function IndeksDesaRadar({ data, tahun }: IndeksDesaRadarProps) {
         </div>
 
         {/* Detailed stats list */}
-        <div className="w-full space-y-2 mt-2">
-          <div className="space-y-1.5">
+        <div className="flex-1 w-full space-y-3 lg:max-w-md flex justify-center flex-col">
+          <div className="space-y-4">
             {dimensionsList.map((d) => (
-              <div key={d.key} className="flex justify-between items-center text-xs border-b border-slate-100 pb-1">
-                <div className="flex items-center gap-1.5 min-w-0">
-                  <span className={`w-2 h-2 rounded-full ${d.color} flex-shrink-0`} />
-                  <span className="text-slate-500 font-bold truncate leading-none">
+              <div key={d.key} className="flex justify-between items-center text-sm border-b border-slate-100 pb-2">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className={`w-2.5 h-2.5 rounded-full ${d.color} flex-shrink-0`} />
+                  <span className="text-slate-600 font-bold truncate leading-none">
                     {d.label}
                   </span>
                 </div>

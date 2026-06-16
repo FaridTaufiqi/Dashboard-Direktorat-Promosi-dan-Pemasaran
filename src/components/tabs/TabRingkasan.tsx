@@ -34,8 +34,8 @@ export default function TabRingkasan({
         />
       </div>
 
-      {/* ROW 2: 4-COLUMN METRICS GRID (Radar, Donut BUMDes, Pemeringkatan, Bagi Hasil) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-stretch w-full">
+      {/* ROW 2: METRICS GRID (Radar, Donut BUMDes, Pemeringkatan, Bagi Hasil) */}
+      <div className="grid grid-cols-1 gap-6 items-stretch w-full">
         <IndeksDesaRadar data={activeData} tahun={filters.tahun} />
         <BUMDesaChart
           data={activeData}

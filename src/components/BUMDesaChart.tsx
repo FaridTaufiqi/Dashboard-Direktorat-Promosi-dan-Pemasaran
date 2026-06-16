@@ -200,9 +200,9 @@ export default function BUMDesaChart({
         </div>
       </div>
 
-      <div className="flex flex-col gap-5 items-stretch my-1.5 flex-1">
-        {/* Top Col: Donut Chart displaying the 4 status classifications */}
-        <div className="flex flex-col items-center justify-center relative bg-slate-50/60 rounded-xl p-4 border border-slate-100">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 items-stretch my-1.5 flex-1 w-full">
+        {/* Left Col: Donut Chart displaying the 4 status classifications */}
+        <div className="flex flex-col items-center justify-center relative bg-slate-50/60 rounded-xl p-4 border border-slate-100 min-h-[160px]">
           <div className="relative w-32 h-32 flex items-center justify-center select-none">
             <svg width="100%" height="100%" viewBox="0 0 100 100" className="transform -rotate-90">
               <circle
@@ -350,7 +350,7 @@ export default function BUMDesaChart({
           </div>
         </div>
 
-        {/* Bottom Col: Scrollable Province List & breakdown stats bars */}
+        {/* Right Col: Scrollable Province List & breakdown stats bars */}
         <div className="flex-1 flex flex-col gap-4 min-h-0">
           <div className="flex-1 flex flex-col min-h-0">
             <span className="text-[9.5px] font-black text-slate-400 uppercase tracking-widest block mb-1.5 leading-none">

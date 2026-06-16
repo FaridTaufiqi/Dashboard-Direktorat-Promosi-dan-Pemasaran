@@ -117,7 +117,7 @@ export default function PemeringkatanBUMDesa({ data, tahun }: PemeringkatanBUMDe
       </div>
 
       {/* Aspects Bar Charts - Full Width for ample breathing room */}
-      <div className="flex-1 flex flex-col justify-center gap-2.5">
+      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-4 content-center my-2">
         {list.map((item) => {
           const pct = Math.min(item.val, 100);
           return (
