@@ -200,9 +200,9 @@ export default function BUMDesaChart({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 items-stretch my-1.5 flex-1 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch my-1.5 flex-1 w-full h-full min-h-0">
         {/* Left Col: Donut Chart displaying the 4 status classifications */}
-        <div className="flex flex-col items-center justify-center relative bg-slate-50/60 rounded-xl p-4 border border-slate-100 min-h-[160px]">
+        <div className="flex flex-col items-center justify-center relative bg-slate-50/60 rounded-xl p-4 border border-slate-100 h-full">
           <div className="relative w-32 h-32 flex items-center justify-center select-none">
             <svg width="100%" height="100%" viewBox="0 0 100 100" className="transform -rotate-90">
               <circle
@@ -351,13 +351,13 @@ export default function BUMDesaChart({
         </div>
 
         {/* Right Col: Scrollable Province List & breakdown stats bars */}
-        <div className="flex-1 flex flex-col gap-4 min-h-0">
-          <div className="flex-1 flex flex-col min-h-0">
-            <span className="text-[9.5px] font-black text-slate-400 uppercase tracking-widest block mb-1.5 leading-none">
+        <div className="flex-1 flex flex-col min-h-0 h-full">
+          <div className="flex-1 flex flex-col min-h-0 min-h-[145px]">
+            <span className="text-[9.5px] font-black text-slate-400 uppercase tracking-widest block mb-1.5 leading-none shrink-0">
               DAFTAR AMBANG BATAS POPULASI BUM DESA PER WILAYAH
             </span>
             {/* Scrollable Container containing all provinces */}
-            <div className="flex-1 overflow-y-auto space-y-1 pr-1 scrollbar-thin shadow-inner bg-slate-50 rounded-lg p-1.5 border border-slate-100 min-h-[145px]">
+            <div className="flex-1 overflow-y-auto space-y-1 pr-1 scrollbar-thin shadow-inner bg-slate-50 rounded-lg p-1.5 border border-slate-100">
               {sortedProvinces.map((prov, idx) => {
                 const isSelected = data.id === prov.id;
                 return (
