@@ -165,7 +165,7 @@ export default function BUMDesaChart({
   return (
     <div className="bg-white rounded-[24px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col justify-between h-full space-y-4">
       {/* Header Panel */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="text-xs font-black text-slate-700 uppercase tracking-widest leading-none mb-1">
             {isBersama ? "BUM DESA BERSAMA PER PROVINSI" : "BUM DESA PER PROVINSI"}
@@ -200,9 +200,9 @@ export default function BUMDesaChart({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center my-1.5">
-        {/* Left Col (5 cols): Donut Chart displaying the 4 status classifications */}
-        <div className="sm:col-span-5 flex flex-col items-center justify-center relative bg-slate-50/60 rounded-xl p-3 border border-slate-100">
+      <div className="flex flex-col gap-5 items-stretch my-1.5 flex-1">
+        {/* Top Col: Donut Chart displaying the 4 status classifications */}
+        <div className="flex flex-col items-center justify-center relative bg-slate-50/60 rounded-xl p-4 border border-slate-100">
           <div className="relative w-32 h-32 flex items-center justify-center select-none">
             <svg width="100%" height="100%" viewBox="0 0 100 100" className="transform -rotate-90">
               <circle
@@ -350,15 +350,14 @@ export default function BUMDesaChart({
           </div>
         </div>
 
-        {/* Right Col (7 cols): Scrollable Province List & breakdown stats bars */}
-        <div className="sm:col-span-7 space-y-3.5">
-          {/* Scrollable Province List instead of static 5 */}
-          <div>
+        {/* Bottom Col: Scrollable Province List & breakdown stats bars */}
+        <div className="flex-1 flex flex-col gap-4 min-h-0">
+          <div className="flex-1 flex flex-col min-h-0">
             <span className="text-[9.5px] font-black text-slate-400 uppercase tracking-widest block mb-1.5 leading-none">
               DAFTAR AMBANG BATAS POPULASI BUM DESA PER WILAYAH
             </span>
             {/* Scrollable Container containing all provinces */}
-            <div className="space-y-1 max-h-[145px] overflow-y-auto pr-1 scrollbar-thin shadow-inner bg-slate-50 rounded-lg p-1.5 border border-slate-100">
+            <div className="flex-1 overflow-y-auto space-y-1 pr-1 scrollbar-thin shadow-inner bg-slate-50 rounded-lg p-1.5 border border-slate-100 min-h-[145px]">
               {sortedProvinces.map((prov, idx) => {
                 const isSelected = data.id === prov.id;
                 return (

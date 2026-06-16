@@ -28,9 +28,9 @@ export default function NIBandProgram({ data, tahun }: NIBandProgramProps) {
   const prog = data.programInovasi;
   
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
       {/* CARD 1: NIB */}
-      <div className="bg-white rounded-[24px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+      <div className="lg:col-span-4 bg-white rounded-[24px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col justify-between hover:shadow-md transition-shadow">
         <div>
           <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest leading-none mb-1">
             NOMOR INDUK BERUSAHA
@@ -77,7 +77,7 @@ export default function NIBandProgram({ data, tahun }: NIBandProgramProps) {
       </div>
 
       {/* CARD 2: KLUSTERISASI DESA BISA EKSPOR */}
-      <div className="bg-white rounded-[24px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+      <div className="lg:col-span-8 bg-white rounded-[24px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col justify-between hover:shadow-md transition-shadow">
         <div>
           <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest leading-none mb-1">
             KLUSTERISASI DESA BISA EKSPOR

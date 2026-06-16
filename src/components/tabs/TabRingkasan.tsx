@@ -23,38 +23,37 @@ export default function TabRingkasan({
   provinceList,
 }: TabRingkasanProps) {
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
-      {/* LEFT PANEL - Graphics & Metrics */}
-      <div className="xl:col-span-7 flex flex-col gap-6">
+    <div className="flex flex-col gap-6 w-full">
+      {/* ROW 1: FULL WIDTH MAP */}
+      <div className="w-full">
         <SVGIndonesiaMap
           selectedProvince={filters.provinsi}
           onSelectProvince={handleSelectProvince}
           provinceList={provinceList}
           tahun={filters.tahun}
         />
+      </div>
+
+      {/* ROW 2: 4-COLUMN METRICS GRID (Radar, Donut BUMDes, Pemeringkatan, Bagi Hasil) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-stretch w-full">
+        <IndeksDesaRadar data={activeData} tahun={filters.tahun} />
+        <BUMDesaChart
+          data={activeData}
+          tahun={filters.tahun}
+          onSelectProvince={handleSelectProvince}
+          provinceList={provinceList}
+        />
+        <PemeringkatanBUMDesa data={activeData} tahun={filters.tahun} />
+        <BagiHasilPADes data={activeData} tahun={filters.tahun} />
+      </div>
+
+      {/* ROW 3: NIB & KLUSTERISASI (Will render as 2 columns internally) */}
+      <div className="w-full">
         <NIBandProgram data={activeData} tahun={filters.tahun} />
       </div>
 
-      {/* RIGHT PANEL - Analytics & Lists */}
-      <div className="xl:col-span-5 flex flex-col gap-6">
-        {/* Radar & Donut Charts */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <IndeksDesaRadar data={activeData} tahun={filters.tahun} />
-          <BUMDesaChart
-            data={activeData}
-            tahun={filters.tahun}
-            onSelectProvince={handleSelectProvince}
-            provinceList={provinceList}
-          />
-        </div>
-
-        {/* Pemeringkatan & PADes Sub-lists */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <PemeringkatanBUMDesa data={activeData} tahun={filters.tahun} />
-          <BagiHasilPADes data={activeData} tahun={filters.tahun} />
-        </div>
-
-        {/* Regional List (Scrollable Area) */}
+      {/* ROW 4: DATA TABLE */}
+      <div className="w-full">
         <RingkasanWilayah
           selectedProvince={filters.provinsi}
           onSelectProvince={handleSelectProvince}

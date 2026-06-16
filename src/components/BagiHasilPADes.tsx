@@ -85,7 +85,7 @@ export default function BagiHasilPADes({ data, tahun }: BagiHasilPADesProps) {
       </div>
 
       {/* Main SVG Area Line Chart */}
-      <div className="my-3 relative flex items-center justify-center">
+      <div className="flex-1 my-3 relative flex items-center justify-center min-h-[160px]">
         <svg
           viewBox={`0 0 ${svgWidth} ${svgHeight}`}
           className="w-full h-auto overflow-visible select-none"
@@ -254,7 +254,7 @@ export default function BagiHasilPADes({ data, tahun }: BagiHasilPADesProps) {
       </div>
 
       {/* Target Status indicators */}
-      <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs mt-4">
+      <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs mt-4">
         <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-blue-500 block" />2022</span>
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500 block" />2023</span>

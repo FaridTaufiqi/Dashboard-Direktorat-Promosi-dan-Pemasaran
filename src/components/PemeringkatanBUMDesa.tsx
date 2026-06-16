@@ -83,7 +83,7 @@ export default function PemeringkatanBUMDesa({ data, tahun }: PemeringkatanBUMDe
   return (
     <div className="bg-white rounded-[24px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col justify-between h-full space-y-4">
       {/* Title with TOGGLE */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="text-xs font-black text-slate-700 uppercase tracking-widest leading-none mb-1">
             PEMERINGKATAN BADAN USAHA
@@ -117,7 +117,7 @@ export default function PemeringkatanBUMDesa({ data, tahun }: PemeringkatanBUMDe
       </div>
 
       {/* Aspects Bar Charts - Full Width for ample breathing room */}
-      <div className="space-y-2.5">
+      <div className="flex-1 flex flex-col justify-center gap-2.5">
         {list.map((item) => {
           const pct = Math.min(item.val, 100);
           return (
