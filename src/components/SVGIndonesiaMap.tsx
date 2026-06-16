@@ -281,7 +281,7 @@ export default function SVGIndonesiaMap({
   }, [provinceList, tahun]);
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col justify-between h-full space-y-4">
+    <div className="bg-white rounded-[24px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col justify-between h-full space-y-4">
       {/* Title block */}
       <div className="flex items-center justify-between">
         <div>
@@ -303,8 +303,8 @@ export default function SVGIndonesiaMap({
       </div>
 
       {/* Main Grid: Leaflet Map Container */}
-      <div className="relative w-full h-[460px] rounded-xl overflow-hidden shadow-sm border border-slate-200 z-10 bg-slate-100 flex-1">
-        <div ref={mapContainer} className="w-full h-full min-h-[460px]" />
+      <div className="relative w-full h-[400px] xl:h-[600px] min-h-[460px] rounded-[20px] overflow-hidden shadow-sm border border-slate-100/50 z-10 bg-slate-50 flex-1">
+        <div ref={mapContainer} className="w-full h-full absolute inset-0" />
         
         {/* Floating heat map status label */}
         <div className="absolute bottom-3 left-3 z-1001 bg-white/95 backdrop-blur-xs px-3 py-2 rounded-xl shadow-md border border-slate-100 max-w-[200px] select-none">

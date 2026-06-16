@@ -163,7 +163,7 @@ export default function BUMDesaChart({
   }, [provinceList, isBersama]);
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col justify-between h-full space-y-4">
+    <div className="bg-white rounded-[24px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col justify-between h-full space-y-4">
       {/* Header Panel */}
       <div className="flex items-center justify-between">
         <div>

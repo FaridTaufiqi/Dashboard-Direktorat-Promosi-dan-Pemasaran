@@ -88,7 +88,7 @@ export default function IndeksDesaRadar({ data, tahun }: IndeksDesaRadarProps) {
 
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col justify-between h-full">
+    <div className="bg-white rounded-[24px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col justify-between h-full">
       {/* Title */}
       <div>
         <h3 className="text-xs font-black text-slate-700 uppercase tracking-widest leading-none mb-1">
@@ -100,7 +100,7 @@ export default function IndeksDesaRadar({ data, tahun }: IndeksDesaRadarProps) {
       </div>
 
       {/* Main Stack: Centered Radar on top, list details at the bottom */}
-      <div className="flex flex-col items-center my-4 space-y-4">
+      <div className="flex flex-col items-center my-4 flex-1 justify-center space-y-6">
         {/* Centered Radar Chart with strict size container */}
         <div className="flex justify-center items-center w-[300px] h-[300px] sm:w-[260px] sm:h-[260px] relative select-none">
           <svg viewBox="0 0 220 220" className="overflow-visible w-full h-full max-w-[280px]">

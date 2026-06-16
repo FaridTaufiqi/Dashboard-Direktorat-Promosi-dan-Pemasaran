@@ -155,7 +155,7 @@ const KPICards = React.memo(function KPICards({ data, tahun, isAllProvinces }: K
           <div
             key={kpi.id}
             id={kpi.id}
-            className={`border rounded-2xl p-4 flex flex-col justify-between shadow-xs transition-all hover:shadow-xs hover:translate-y-[-1px] ${kpi.bg}`}
+            className={`border rounded-[24px] p-5 flex flex-col justify-between shadow-[0_4px_20px_rgb(0,0,0,0.03)] transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:translate-y-[-2px] ${kpi.bg}`}
           >
             {/* Top row */}
             <div className="flex items-start justify-between">

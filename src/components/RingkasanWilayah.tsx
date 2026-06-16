@@ -24,7 +24,7 @@ export default function RingkasanWilayah({
   const maxDesa = Math.max(...provinceList.map(p => p.desaCount), 10000);
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col justify-between h-full">
+    <div className="bg-white rounded-[24px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col justify-between h-full">
       {/* Header and Search */}
       <div>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
@@ -50,7 +50,7 @@ export default function RingkasanWilayah({
         </div>
 
         {/* Scrollable Table Area */}
-        <div className="flex-1 overflow-x-auto min-h-[320px] max-h-[460px] overflow-y-auto pr-1 scrollbar-thin mt-2">
+        <div className="flex-1 overflow-x-auto min-h-[320px] max-h-[460px] overflow-y-auto pr-1 scrollbar-thin mt-2 relative">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-200 text-[10px] font-bold text-slate-400 uppercase tracking-wider sticky top-0 bg-white z-10">

@@ -23,43 +23,44 @@ export default function TabRingkasan({
   provinceList,
 }: TabRingkasanProps) {
   return (
-    <div className="space-y-6">
-      {/* Row 1: Interactive Map & Ringkasan Table List */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
-        <div className="xl:col-span-3 h-full">
-          <RingkasanWilayah
-            selectedProvince={filters.provinsi}
-            onSelectProvince={handleSelectProvince}
-            provinceList={provinceList}
-          />
-        </div>
-        <div className="xl:col-span-6 h-full">
-          <SVGIndonesiaMap
-            selectedProvince={filters.provinsi}
-            onSelectProvince={handleSelectProvince}
-            provinceList={provinceList}
-            tahun={filters.tahun}
-          />
-        </div>
-        <div className="xl:col-span-3 h-full">
-          <IndeksDesaRadar data={activeData} tahun={filters.tahun} />
-        </div>
+    <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+      {/* LEFT PANEL - Graphics & Metrics */}
+      <div className="xl:col-span-7 flex flex-col gap-6">
+        <SVGIndonesiaMap
+          selectedProvince={filters.provinsi}
+          onSelectProvince={handleSelectProvince}
+          provinceList={provinceList}
+          tahun={filters.tahun}
+        />
+        <NIBandProgram data={activeData} tahun={filters.tahun} />
       </div>
 
-      {/* Row 2: BUM Desa Donut, Aspects Rating, Line Chart */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <BUMDesaChart
-          data={activeData}
-          tahun={filters.tahun}
+      {/* RIGHT PANEL - Analytics & Lists */}
+      <div className="xl:col-span-5 flex flex-col gap-6">
+        {/* Radar & Donut Charts */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <IndeksDesaRadar data={activeData} tahun={filters.tahun} />
+          <BUMDesaChart
+            data={activeData}
+            tahun={filters.tahun}
+            onSelectProvince={handleSelectProvince}
+            provinceList={provinceList}
+          />
+        </div>
+
+        {/* Pemeringkatan & PADes Sub-lists */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <PemeringkatanBUMDesa data={activeData} tahun={filters.tahun} />
+          <BagiHasilPADes data={activeData} tahun={filters.tahun} />
+        </div>
+
+        {/* Regional List (Scrollable Area) */}
+        <RingkasanWilayah
+          selectedProvince={filters.provinsi}
           onSelectProvince={handleSelectProvince}
           provinceList={provinceList}
         />
-        <PemeringkatanBUMDesa data={activeData} tahun={filters.tahun} />
-        <BagiHasilPADes data={activeData} tahun={filters.tahun} />
       </div>
-
-      {/* Row 3: Bottom Row Cards (NIB, Program, BUMDesma Cooperative summaries) */}
-      <NIBandProgram data={activeData} tahun={filters.tahun} />
     </div>
   );
 }

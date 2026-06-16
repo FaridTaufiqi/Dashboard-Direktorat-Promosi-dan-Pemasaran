@@ -28,9 +28,9 @@ export default function NIBandProgram({ data, tahun }: NIBandProgramProps) {
   const prog = data.programInovasi;
   
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-      {/* CARD 1: NOMOR INDUK BERUSAHA (NIB) - 4 Columns */}
-      <div className="lg:col-span-4 bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col justify-between hover:shadow-xs transition-shadow">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+      {/* CARD 1: NIB */}
+      <div className="bg-white rounded-[24px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col justify-between hover:shadow-md transition-shadow">
         <div>
           <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest leading-none mb-1">
             NOMOR INDUK BERUSAHA
@@ -76,8 +76,8 @@ export default function NIBandProgram({ data, tahun }: NIBandProgramProps) {
         </div>
       </div>
 
-      {/* CARD 2: KLUSTERISASI DESA BISA EKSPOR - 8 Columns */}
-      <div className="lg:col-span-8 bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col justify-between hover:shadow-xs transition-shadow">
+      {/* CARD 2: KLUSTERISASI DESA BISA EKSPOR */}
+      <div className="bg-white rounded-[24px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col justify-between hover:shadow-md transition-shadow">
         <div>
           <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest leading-none mb-1">
             KLUSTERISASI DESA BISA EKSPOR
@@ -88,7 +88,7 @@ export default function NIBandProgram({ data, tahun }: NIBandProgramProps) {
         </div>
 
         {/* Bento Grid Sub-items */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 my-4">
+        <div className="grid grid-cols-2 gap-3.5 my-4">
           {/* Item 1: Klaster 1 */}
           <div className="bg-slate-50/50 hover:bg-slate-50 border border-slate-100 p-3 rounded-xl flex items-center gap-3 transition-colors">
             <div className="p-2 rounded-lg bg-teal-50 text-teal-600">

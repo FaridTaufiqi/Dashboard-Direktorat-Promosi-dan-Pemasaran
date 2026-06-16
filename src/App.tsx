@@ -205,7 +205,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-w-0">
+      <main className="flex-1 flex flex-col min-w-0 bg-slate-50/50">
         {/* TOP COMPACT HEADER BLOCK AND FILTER CONTROLS */}
         <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 py-4 md:px-6 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
           {/* Title and Meta */}
