@@ -351,13 +351,13 @@ export default function BUMDesaChart({
         </div>
 
         {/* Right Col: Scrollable Province List & breakdown stats bars */}
-        <div className="flex-1 flex flex-col min-h-0 h-full">
-          <div className="flex-1 flex flex-col min-h-0 min-h-[145px]">
-            <span className="text-[9.5px] font-black text-slate-400 uppercase tracking-widest block mb-1.5 leading-none shrink-0">
-              DAFTAR AMBANG BATAS POPULASI BUM DESA PER WILAYAH
-            </span>
-            {/* Scrollable Container containing all provinces */}
-            <div className="flex-1 overflow-y-auto space-y-1 pr-1 scrollbar-thin shadow-inner bg-slate-50 rounded-lg p-1.5 border border-slate-100">
+        <div className="flex flex-col h-full min-h-0 relative">
+          <span className="text-[9.5px] font-black text-slate-400 uppercase tracking-widest block mb-2 leading-none shrink-0 pl-1">
+            DAFTAR AMBANG BATAS POPULASI BUM DESA PER WILAYAH
+          </span>
+          {/* Scrollable Container containing all provinces */}
+          <div className="flex-1 min-h-0 relative">
+            <div className="absolute inset-0 overflow-y-auto space-y-1 pr-1 scrollbar-thin shadow-inner bg-slate-50 rounded-lg p-1.5 border border-slate-100">
               {sortedProvinces.map((prov, idx) => {
                 const isSelected = data.id === prov.id;
                 return (
