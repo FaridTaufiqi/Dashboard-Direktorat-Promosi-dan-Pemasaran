@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { Store, Layers, Award, ShieldAlert, Star, TrendingUp } from "lucide-react";
 import { ProvinceData } from "../types";
 import { formatIndoNumber, formatIndoDecimal } from "./KPICards";
+import AIInsightBox from "./AIInsightBox";
 
 interface BUMDesaChartProps {
   data: ProvinceData;
@@ -200,7 +201,7 @@ export default function BUMDesaChart({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch my-1.5 flex-1 w-full h-full min-h-0">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch my-1.5 flex-1 w-full h-full min-h-0">
         {/* Left Col: Donut Chart displaying the 4 status classifications */}
         <div className="flex flex-col items-center justify-center relative bg-slate-50/60 rounded-xl p-4 border border-slate-100 h-full">
           <div className="relative w-32 h-32 flex items-center justify-center select-none">
@@ -382,6 +383,16 @@ export default function BUMDesaChart({
               })}
             </div>
           </div>
+        </div>
+
+        {/* Third Col: AI Insight */}
+        <div className="h-full flex flex-col min-h-0 lg:col-span-1 md:col-span-2 sm:col-span-1">
+          <AIInsightBox 
+            insight={
+              `Status Badan Hukum ${isBersama ? "BUM Desa Bersama" : "BUM Desa"} pada tingkat ${data.name === "NASIONAL" ? "nasional" : `wilayah ${data.name}`} mencatat ${formatIndoNumber(statusData?.terverifikasiDokumen || 0)} entitas telah terverifikasi penuh. Sisanya masih dalam proses perbaikan nama atau dokumen, menandakan perlunya pendampingan legalitas yang lebih intensif guna mencapai ketahanan badan usaha.`
+            } 
+            className="h-full bg-slate-50 border-dashed border-slate-200" 
+          />
         </div>
       </div>
 

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Coins, HelpCircle } from "lucide-react";
 import { ProvinceData } from "../types";
 import { formatIndoNumber } from "./KPICards";
+import AIInsightBox from "./AIInsightBox";
 
 interface BagiHasilPADesProps {
   data: ProvinceData;
@@ -15,6 +16,22 @@ export default function BagiHasilPADes({ data, tahun }: BagiHasilPADesProps) {
   const bagiHasil = data.bagiHasilPADes;
   const years = ["2022", "2023", "2024", "2025"];
   const values = years.map((y) => bagiHasil[y] || 0);
+
+  const aiInsightText = useMemo(() => {
+    const sumAll = values.reduce((a, b) => a + b, 0);
+    const avg = sumAll / values.length;
+    const isGrowing = values[values.length - 1] > values[0];
+    
+    // In Juta / Miliar
+    const formatValue = (num: number) => {
+      if (num >= 1e9) return `Rp${(num / 1e9).toFixed(1)} Miliar`;
+      return `Rp${(num / 1e6).toFixed(1)} Juta`;
+    };
+
+    if (sumAll === 0) return "Belum terdapat pencatatan sirkulasi Pendapatan Asli Desa (PADes) pada wilayah sasaran.";
+
+    return `Sirkulasi Pendapatan Asli Desa (PADes) menunjukkan tren ${isGrowing ? "positif" : "konsolidasi"} historis dengan akumulasi distribusi senilai ${formatValue(sumAll)}. Evaluasi memetakan ekspektasi yield dividen yang kian atraktif bagi BUM Desa, menggarisbawahi peran vitalnya sebagai tulang punggung substitusi fiskal kelembagaan lokal.`;
+  }, [values]);
 
   // Extracted dynamically format
   const formatAuto = (val: number) => {
@@ -254,7 +271,7 @@ export default function BagiHasilPADes({ data, tahun }: BagiHasilPADesProps) {
       </div>
 
       {/* Target Status indicators */}
-      <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs mt-4">
+      <div className="pt-2 flex flex-wrap items-center justify-between gap-3 text-xs mt-4">
         <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-blue-500 block" />2022</span>
           <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500 block" />2023</span>
@@ -265,6 +282,10 @@ export default function BagiHasilPADes({ data, tahun }: BagiHasilPADesProps) {
         <div className="text-right text-[10px] font-bold text-slate-400">
           NILAI PADes AKTUAL
         </div>
+      </div>
+
+      <div className="mt-2 border-t border-slate-100 pt-5">
+        <AIInsightBox insight={aiInsightText} className="border-dashed" />
       </div>
     </div>
   );

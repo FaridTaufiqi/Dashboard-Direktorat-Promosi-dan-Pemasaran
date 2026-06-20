@@ -212,31 +212,35 @@ export default function App() {
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col min-w-0 bg-slate-50/50">
         {/* TOP COMPACT HEADER BLOCK AND FILTER CONTROLS */}
-        <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 py-4 md:px-6 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-200/50 px-4 py-4 md:px-6 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 shadow-xs transition-all">
           {/* Title and Meta */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100"
+              className="lg:hidden p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
             >
-              <Menu className="w-6 h-6" />
+              <Menu className="w-5 h-5" />
             </button>
-            <div>
-              <h1 className="text-xl md:text-2xl font-black text-[#0c4a9f] tracking-tight uppercase flex items-center gap-2">
-                DASHBOARD DATA DESA & BUM DESA
-              </h1>
-              <p className="text-xs md:text-sm font-bold text-slate-400 tracking-wide mt-0.5">
-                INDEKS DESA & PEMERINGKATAN BUM DESA INDONESIA
-              </p>
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:flex w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 items-center justify-center shadow-lg shadow-blue-500/20 text-white">
+                <Layers className="w-5 h-5" />
+              </div>
+              <div>
+                <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase flex items-center gap-2">
+                  PORTAL DATA DESA
+                </h1>
+                <p className="text-[10px] md:text-[11px] font-bold text-blue-600 tracking-widest mt-0.5 uppercase bg-blue-50 w-max px-2 py-0.5 rounded-full border border-blue-100">
+                  Dashboard Analytics & Executive Summary
+                </p>
+              </div>
             </div>
           </div>
 
           {/* Filters & Actions Panel */}
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
             {/* Year Selector */}
-            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-606 font-bold">
-              <Calendar className="w-3.5 h-3.5 text-slate-400" />
-              <span>Tahun Data:</span>
+            <div className="flex items-center gap-1.5 bg-white border border-slate-200 shadow-xs rounded-lg px-3 py-1.5 text-xs text-slate-600 font-bold hover:border-slate-300 transition-colors group">
+              <Calendar className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-500 transition-colors" />
               <select
                 value={filters.tahun}
                 onChange={(e) => setFilters({ ...filters, tahun: e.target.value })}
@@ -251,9 +255,8 @@ export default function App() {
             </div>
 
             {/* Province Selector */}
-            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-606 font-bold">
-              <Layers className="w-3.5 h-3.5 text-slate-400" />
-              <span>Pilih Provinsi:</span>
+            <div className="flex items-center gap-1.5 bg-white border border-slate-200 shadow-xs rounded-lg px-3 py-1.5 text-xs text-slate-600 font-bold hover:border-slate-300 transition-colors group">
+              <Layers className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-500 transition-colors" />
               <select
                 value={filters.provinsi}
                 onChange={(e) =>
@@ -278,12 +281,11 @@ export default function App() {
 
             {/* Kabupaten/Kota Selector */}
             <div
-              className={`flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-606 font-bold transition-opacity ${
-                filters.provinsi === "ALL" ? "opacity-50" : ""
+              className={`flex items-center gap-1.5 bg-white border border-slate-200 shadow-xs rounded-lg px-3 py-1.5 text-xs text-slate-600 font-bold transition-all group ${
+                filters.provinsi === "ALL" ? "opacity-50 pointer-events-none" : "hover:border-slate-300"
               }`}
             >
-              <Layers className="w-3.5 h-3.5 text-slate-400" />
-              <span>Kabupaten/Kota:</span>
+              <Layers className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-500 transition-colors" />
               <select
                 value={filters.kabupaten}
                 disabled={filters.provinsi === "ALL"}
@@ -308,12 +310,11 @@ export default function App() {
 
             {/* Kecamatan Selector */}
             <div
-              className={`flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-606 font-bold transition-opacity ${
-                filters.provinsi === "ALL" || filters.kabupaten === "ALL" ? "opacity-50" : ""
+              className={`flex items-center gap-1.5 bg-white border border-slate-200 shadow-xs rounded-lg px-3 py-1.5 text-xs text-slate-600 font-bold transition-all group ${
+                filters.provinsi === "ALL" || filters.kabupaten === "ALL" ? "opacity-50 pointer-events-none" : "hover:border-slate-300"
               }`}
             >
-              <Layers className="w-3.5 h-3.5 text-slate-400" />
-              <span>Kecamatan:</span>
+              <Layers className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-500 transition-colors" />
               <select
                 value={filters.kecamatan}
                 disabled={filters.provinsi === "ALL" || filters.kabupaten === "ALL"}
@@ -337,14 +338,13 @@ export default function App() {
 
             {/* Desa Selector */}
             <div
-              className={`flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-606 font-bold transition-opacity ${
+              className={`flex items-center gap-1.5 bg-white border border-slate-200 shadow-xs rounded-lg px-3 py-1.5 text-xs text-slate-600 font-bold transition-all group ${
                 filters.provinsi === "ALL" || filters.kabupaten === "ALL" || filters.kecamatan === "ALL"
-                  ? "opacity-50"
-                  : ""
+                  ? "opacity-50 pointer-events-none"
+                  : "hover:border-slate-300"
               }`}
             >
-              <Layers className="w-3.5 h-3.5 text-slate-400" />
-              <span>Desa/Kelurahan:</span>
+              <Layers className="w-3.5 h-3.5 text-slate-400 group-hover:text-rose-500 transition-colors" />
               <select
                 value={filters.desa}
                 disabled={
@@ -369,26 +369,25 @@ export default function App() {
               </select>
             </div>
 
-            {/* Update Timestamps */}
-            <div className="flex items-center gap-3">
+            {/* Update Timestamps & Actions */}
+            <div className="flex items-center gap-3 pl-2 border-l border-slate-200">
               <button
                 id="btn-refresh-data"
                 onClick={() => triggerSync()}
                 disabled={isSheetsLoading}
-                className="flex items-center gap-1.5 px-3 py-2 bg-slate-50 border border-slate-200 hover:border-slate-300 hover:bg-slate-100 text-slate-700 disabled:opacity-50 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
+                className="flex items-center justify-center p-2.5 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 disabled:opacity-50 rounded-lg transition-all cursor-pointer shadow-xs hover:shadow-sm"
                 title="Refresh data aktual dari Google Sheets"
               >
                 <RefreshCw
-                  className={`w-3.5 h-3.5 text-blue-600 ${isSheetsLoading ? "animate-spin" : ""}`}
+                  className={`w-4 h-4 text-blue-600 ${isSheetsLoading ? "animate-spin" : ""}`}
                 />
-                <span>Refresh Data</span>
               </button>
 
-              <div className="hidden sm:block text-right pr-1">
-                <span className="text-[9px] text-slate-400 font-black block uppercase tracking-widest leading-none">
-                  SINKRONISASI AKTUAL
+              <div className="hidden sm:block text-right pr-2">
+                <span className="text-[9px] text-slate-400 font-black block uppercase tracking-widest leading-none mb-0.5">
+                  UPDATE TERAKHIR
                 </span>
-                <span className="text-xs text-slate-600 font-black font-mono">
+                <span className="text-xs text-slate-700 font-black tracking-tight">
                   {lastRefreshed.toLocaleTimeString("id-ID")} WIB
                 </span>
               </div>
@@ -397,14 +396,14 @@ export default function App() {
             {/* Download Button */}
             <button
               onClick={handleDownloadReport}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md cursor-pointer ${
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs font-bold transition-all shadow-[0_2px_10px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_15px_rgba(37,99,235,0.2)] cursor-pointer hover:-translate-y-0.5 ${
                 downloadSuccess
-                  ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-200"
-                  : "bg-[#0c4a9f] hover:bg-blue-800 text-white shadow-blue-200"
+                  ? "bg-emerald-600 text-white"
+                  : "bg-blue-600 hover:bg-blue-700 text-white"
               }`}
             >
-              <Download className="w-4 h-4" />
-              <span>{downloadSuccess ? "Tersimpan!" : "Unduh Laporan"}</span>
+              <Download className="w-4 h-4 text-blue-100" />
+              <span>{downloadSuccess ? "Tersimpan!" : "Unduh Laporan Executive"}</span>
             </button>
           </div>
         </header>
@@ -416,41 +415,41 @@ export default function App() {
             filters.kabupaten !== "ALL" ||
             filters.kecamatan !== "ALL" ||
             filters.desa !== "ALL") && (
-            <div className="bg-blue-50/70 border border-blue-100 rounded-xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs text-blue-800 font-semibold shadow-xs">
-              <div className="flex items-center gap-2 flex-wrap">
+            <div className="bg-white border border-slate-200/60 rounded-xl px-5 py-3 flex flex-wrap items-center justify-between gap-4 text-xs text-slate-800 font-semibold shadow-[0_4px_20px_rgb(0,0,0,0.03)] bg-linear-to-r from-blue-50/30 to-indigo-50/10">
+              <div className="flex items-center gap-2.5 flex-wrap">
                 <Sparkles className="w-4 h-4 text-blue-500 shrink-0" />
-                <span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">
-                  Fokus Wilayah:
+                <span className="text-slate-400 font-black uppercase tracking-widest text-[10px]">
+                  FOKUS WILAYAH:
                 </span>
-                <span className="font-extrabold uppercase text-[#0c4a9f]">Nasional</span>
+                <span className="font-extrabold uppercase text-slate-600 bg-slate-100/50 border border-slate-200 px-2.5 py-1 rounded-md shadow-xs">Nasional</span>
                 {filters.provinsi !== "ALL" && (
                   <>
-                    <span className="text-slate-300 select-none">&rsaquo;</span>
-                    <span className="font-extrabold uppercase text-blue-700 bg-blue-100/65 px-2 py-0.5 rounded-md">
+                    <span className="text-slate-300 font-light select-none">/</span>
+                    <span className="font-extrabold uppercase text-blue-800 bg-blue-50 border border-blue-100/60 shadow-xs px-2.5 py-1 rounded-md">
                       {(sheetsData?.provinces || provinceDataList).find((p) => p.id === filters.provinsi)?.name}
                     </span>
                   </>
                 )}
                 {filters.kabupaten !== "ALL" && (
                   <>
-                    <span className="text-slate-300 select-none">&rsaquo;</span>
-                    <span className="font-extrabold uppercase text-indigo-700 bg-indigo-100/65 px-2 py-0.5 rounded-md">
+                    <span className="text-slate-300 font-light select-none">/</span>
+                    <span className="font-extrabold uppercase text-indigo-800 bg-indigo-50 border border-indigo-100/60 shadow-xs px-2.5 py-1 rounded-md">
                       {filters.kabupaten}
                     </span>
                   </>
                 )}
                 {filters.kecamatan !== "ALL" && (
                   <>
-                    <span className="text-slate-300 select-none">&rsaquo;</span>
-                    <span className="font-extrabold uppercase text-amber-700 bg-amber-100/65 px-2 py-0.5 rounded-md">
+                    <span className="text-slate-300 font-light select-none">/</span>
+                    <span className="font-extrabold uppercase text-amber-800 bg-amber-50 border border-amber-100/60 shadow-xs px-2.5 py-1 rounded-md">
                       {filters.kecamatan}
                     </span>
                   </>
                 )}
                 {filters.desa !== "ALL" && (
                   <>
-                    <span className="text-slate-300 select-none">&rsaquo;</span>
-                    <span className="font-extrabold uppercase text-emerald-700 bg-emerald-100/65 px-2 py-0.5 rounded-md">
+                    <span className="text-slate-300 font-light select-none">/</span>
+                    <span className="font-extrabold uppercase text-emerald-800 bg-emerald-50 border border-emerald-100/60 shadow-xs px-2.5 py-1 rounded-md">
                       {filters.desa}
                     </span>
                   </>
@@ -466,9 +465,9 @@ export default function App() {
                     desa: "ALL",
                   })
                 }
-                className="text-[10px] bg-white border border-blue-200 text-blue-700 hover:text-white px-2.5 py-1 rounded-lg font-bold hover:bg-blue-600 hover:border-blue-650 transition-colors cursor-pointer"
+                className="text-[10px] bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-600 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer shadow-xs uppercase tracking-widest hover:text-slate-900"
               >
-                Reset Filter Wilayah
+                Reset Wilayah
               </button>
             </div>
           )}

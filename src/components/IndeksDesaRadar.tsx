@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Award, ShieldAlert, Sparkles } from "lucide-react";
 import { ProvinceData } from "../types";
 import { formatIndoDecimal, formatIndoPrecise } from "./KPICards";
+import AIInsightBox from "./AIInsightBox";
 
 interface IndeksDesaRadarProps {
   data: ProvinceData;
@@ -45,6 +46,15 @@ export default function IndeksDesaRadar({ data, tahun }: IndeksDesaRadarProps) {
     kategori = "Tertinggal";
     kategoriColor = "text-rose-600 bg-rose-50 border-rose-100";
   }
+
+  const aiInsightText = useMemo(() => {
+    const minDim = dimensionsList.reduce((min, cur) => cur.val < min.val ? cur : min, dimensionsList[0]);
+    const maxDim = dimensionsList.reduce((max, cur) => cur.val > max.val ? cur : max, dimensionsList[0]);
+    const minVal = minDim.val > 1.2 ? minDim.val : minDim.val * 100;
+    const maxVal = maxDim.val > 1.2 ? maxDim.val : maxDim.val * 100;
+    
+    return `Evaluasi dimensi mengungkap resiliensi tertinggi pada aspek ${maxDim.label.toUpperCase()} dengan skor komposit ${formatIndoDecimal(maxVal)}. Mengingat metasegregasi desa yang dominan berstatus ${kategori.toUpperCase()}, optimasi intervensi strategis patut difokuskan pada sektor ${minDim.label.toUpperCase()} yang saat ini menjadi bottleneck struktural pada angka ${formatIndoDecimal(minVal)}.`;
+  }, [dimensionsList, kategori]);
 
   // --- MATHEMATICAL MATH FOR THE SVG RADAR CHART ---
   const width = 220;
@@ -237,6 +247,10 @@ export default function IndeksDesaRadar({ data, tahun }: IndeksDesaRadarProps) {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="mt-4 border-t border-slate-100 pt-5">
+        <AIInsightBox insight={aiInsightText} className="border-dashed" />
       </div>
     </div>
   );

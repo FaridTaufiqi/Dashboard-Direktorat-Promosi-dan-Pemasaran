@@ -49,70 +49,72 @@ export default function RingkasanWilayah({
           </div>
         </div>
 
-        {/* Scrollable Table Area */}
-        <div className="flex-1 overflow-x-auto min-h-[320px] max-h-[460px] overflow-y-auto pr-1 scrollbar-thin mt-2 relative">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-200 text-[10px] font-bold text-slate-400 uppercase tracking-wider sticky top-0 bg-white z-10">
-                <th className="pb-2 font-semibold bg-white">No</th>
-                <th className="pb-2 font-semibold bg-white">Provinsi</th>
-                <th className="pb-2 text-center font-semibold bg-white">Kab</th>
-                <th className="pb-2 text-center font-semibold bg-white">Kec</th>
-                <th className="pb-2 text-right font-semibold pr-2 bg-white">Desa</th>
-                <th className="pb-2 font-semibold w-16 bg-white">Visual</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {filteredProvinces.map((prov, index) => {
-                const isSelected = selectedProvince === prov.id;
-                const percentOfMax = (prov.desaCount / maxDesa) * 100;
-                
-                return (
-                  <tr
-                    key={prov.id}
-                    onClick={() => onSelectProvince(prov.id)}
-                    className={`group cursor-pointer text-xs transition-colors hover:bg-slate-50 ${
-                      isSelected ? "bg-blue-50/60 font-bold" : ""
-                    }`}
-                  >
-                    <td className="py-2.5 pl-1 text-slate-400 font-bold font-mono">
-                      {index + 1}
-                    </td>
-                    <td className="py-2.5 font-bold text-slate-700 group-hover:text-blue-600 transition-colors">
-                      {prov.name}
-                    </td>
-                    <td className="py-2.5 text-center text-slate-600 font-medium font-mono">
-                      {prov.kabupatenCount}
-                    </td>
-                    <td className="py-2.5 text-center text-slate-600 font-medium font-mono">
-                      {prov.kecamatanCount}
-                    </td>
-                    <td className="py-2.5 text-right text-slate-800 font-bold font-mono pr-2">
+      {/* Scrollable Table Area */}
+      <div className="flex-1 overflow-x-auto min-h-[320px] max-h-[460px] overflow-y-auto pr-1 scrollbar-thin mt-2 relative">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="border-b-2 border-slate-200 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] sticky top-0 bg-white/95 backdrop-blur-sm z-10">
+              <th className="pb-3 pl-2 font-semibold bg-transparent">No</th>
+              <th className="pb-3 font-semibold bg-transparent">Provinsi</th>
+              <th className="pb-3 text-center font-semibold bg-transparent">Kab</th>
+              <th className="pb-3 text-center font-semibold bg-transparent">Kec</th>
+              <th className="pb-3 text-right font-semibold pr-2 bg-transparent">Desa</th>
+              <th className="pb-3 text-center font-semibold bg-transparent">Vis</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {filteredProvinces.map((prov, index) => {
+              const isSelected = selectedProvince === prov.id;
+              const percentOfMax = (prov.desaCount / maxDesa) * 100;
+              
+              return (
+                <tr
+                  key={prov.id}
+                  onClick={() => onSelectProvince(prov.id)}
+                  className={`group cursor-pointer text-xs transition-all duration-300 hover:bg-blue-50/50 ${
+                    isSelected ? "bg-blue-50/80 shadow-inner" : ""
+                  }`}
+                >
+                  <td className={`py-3 pl-2 font-mono transition-colors ${isSelected ? "text-blue-600 font-bold" : "text-slate-400 font-medium"}`}>
+                    {(index + 1).toString().padStart(2, '0')}
+                  </td>
+                  <td className={`py-3 transition-colors ${isSelected ? "text-blue-700 font-black" : "text-slate-700 font-semibold group-hover:text-blue-600"}`}>
+                    {prov.name}
+                  </td>
+                  <td className="py-3 text-center text-slate-500 font-medium font-mono group-hover:text-slate-700 transition-colors">
+                    {prov.kabupatenCount}
+                  </td>
+                  <td className="py-3 text-center text-slate-500 font-medium font-mono group-hover:text-slate-700 transition-colors">
+                    {prov.kecamatanCount}
+                  </td>
+                  <td className="py-3 text-right font-bold font-mono pr-2 transition-colors group-hover:text-slate-900">
+                    <span className={isSelected ? "text-blue-700" : "text-slate-800"}>
                       {formatIndoNumber(prov.desaCount)}
-                    </td>
-                    <td className="py-2.5">
-                      {/* Interactive Visual Bar */}
-                      <div className="w-16 bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                        <div
-                          className="bg-blue-600 h-full rounded-full transition-all duration-500"
-                          style={{ width: `${percentOfMax}%` }}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-
-              {filteredProvinces.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="text-center py-8 text-xs text-slate-400 font-medium">
-                    Provinsi "{searchQuery}" tidak ditemukan
+                    </span>
+                  </td>
+                  <td className="py-3 pl-4">
+                    {/* Interactive Visual Bar */}
+                    <div className="w-16 bg-slate-100 h-1.5 rounded-full overflow-hidden shadow-inner flex items-center">
+                      <div
+                        className={`h-full rounded-full transition-all duration-1000 ease-out ${isSelected ? "bg-blue-600" : "bg-blue-400 group-hover:bg-blue-500"}`}
+                        style={{ width: `${Math.max(2, percentOfMax)}%` }}
+                      />
+                    </div>
                   </td>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+              );
+            })}
+
+            {filteredProvinces.length === 0 && (
+              <tr>
+                <td colSpan={6} className="text-center py-12 text-xs text-slate-400 font-medium bg-slate-50/50 rounded-b-[24px]">
+                  Data "{searchQuery}" tidak ditemukan pada indeks pencarian
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
       </div>
 
       {/* Footer Navigation Link */}
