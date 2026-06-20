@@ -210,6 +210,12 @@ export const provinceDataList: ProvinceData[] = provincesMeta.map(pm => {
     mbg2026: Math.round(pm.desa * 0.18)
   };
 
+  const makanBergiziGratis = {
+    bumDesaCount: programInovasi.mbg2026,
+    pendapatan2025: programInovasi.mbg2025 * 32.5, // Mock data Miliar Rp
+    pendapatan2026: programInovasi.mbg2026 * 41.8
+  };
+
   // BUMDesma (BUM Desa Bersama)
   const bBersamaCount = Math.round(pm.kec * 0.22) || 1;
   const bBersamaAktif = Math.round(bBersamaCount * 0.74);
@@ -234,6 +240,7 @@ export const provinceDataList: ProvinceData[] = provincesMeta.map(pm => {
       percentage: nibPercentage
     },
     programInovasi,
+    makanBergiziGratis,
     bumDesaBersama: {
       count: bBersamaCount,
       aktif: bBersamaAktif,
@@ -380,6 +387,11 @@ export const nationalSummary: ProvinceData = {
     desaBrilian: 3276,
     mbg2025: 6401,
     mbg2026: 8752,
+  },
+  makanBergiziGratis: {
+    bumDesaCount: 8752,
+    pendapatan2025: 6401 * 32.5,
+    pendapatan2026: 8752 * 41.8,
   },
   bumDesaBersama: {
     count: 1258,
@@ -625,6 +637,11 @@ export function getFilteredData(filters: DashboardFilters): ProvinceData {
         desaBrilian: Math.round(bumDesaCount * 0.08),
         mbg2025: Math.round(totalDesaInKab * 0.12),
         mbg2026: Math.round(totalDesaInKab * 0.18)
+      },
+      makanBergiziGratis: {
+        bumDesaCount: Math.round(totalDesaInKab * 0.18),
+        pendapatan2025: Math.round(totalDesaInKab * 0.12) * 5.2,
+        pendapatan2026: Math.round(totalDesaInKab * 0.18) * 8.4
       }
     };
   }
@@ -682,6 +699,11 @@ export function getFilteredData(filters: DashboardFilters): ProvinceData {
         desaBrilian: Math.round(bumDesaCount * 0.1),
         mbg2025: Math.round(totalDesaInKec * 0.15),
         mbg2026: Math.round(totalDesaInKec * 0.22)
+      },
+      makanBergiziGratis: {
+        bumDesaCount: Math.round(totalDesaInKec * 0.22),
+        pendapatan2025: Math.round(totalDesaInKec * 0.15) * 2.1,
+        pendapatan2026: Math.round(totalDesaInKec * 0.22) * 3.8
       }
     };
   }
@@ -735,6 +757,11 @@ export function getFilteredData(filters: DashboardFilters): ProvinceData {
         desaBrilian: hasBumdes && (desaSeed % 6) === 0 ? 1 : 0,
         mbg2025: (desaSeed % 4) < 3 ? 1 : 0, // Makan Bergizi Gratis 2025
         mbg2026: 1
+      },
+      makanBergiziGratis: {
+        bumDesaCount: 1,
+        pendapatan2025: ((desaSeed % 4) < 3 ? 1 : 0) * 0.45,
+        pendapatan2026: 0.65
       }
     };
   }

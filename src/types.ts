@@ -93,6 +93,11 @@ export interface ProvinceData {
     mbg2025: number;
     mbg2026: number;
   };
+  makanBergiziGratis?: {
+    bumDesaCount: number;
+    pendapatan2025: number;
+    pendapatan2026: number;
+  };
   
   // BUM Desa Bersama
   bumDesaBersama: {

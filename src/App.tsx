@@ -24,6 +24,7 @@ import TabPADes from "./components/tabs/TabPADes";
 import TabNIB from "./components/tabs/TabNIB";
 import TabBumDesaBersama from "./components/tabs/TabBumDesaBersama";
 import TabDesaEkspor from "./components/tabs/TabDesaEkspor";
+import TabMakanBergiziGratis from "./components/tabs/TabMakanBergiziGratis";
 import TabKeterangan from "./components/tabs/TabKeterangan";
 
 import { provinceDataList } from "./data/mockData";
@@ -180,6 +181,10 @@ export default function App() {
   const renderedTabDesaEkspor = useMemo(() => (
     <TabDesaEkspor data={activeData} />
   ), [activeData]);
+
+  const renderedTabMbg = useMemo(() => (
+    <TabMakanBergiziGratis data={activeData} tahun={filters.tahun} />
+  ), [activeData, filters.tahun]);
 
   const renderedTabBumDesaBersama = useMemo(() => (
     <TabBumDesaBersama
@@ -480,6 +485,7 @@ export default function App() {
           {activeTab === "pades" && renderedTabPADes}
           {activeTab === "nib" && renderedTabNIB}
           {activeTab === "desa-ekspor" && renderedTabDesaEkspor}
+          {activeTab === "makan-bergizi-gratis" && renderedTabMbg}
           {activeTab === "bumdes-bersama" && renderedTabBumDesaBersama}
           {activeTab === "keterangan" && renderedTabKeterangan}
         </div>

@@ -6,6 +6,7 @@ import BUMDesaChart from "../BUMDesaChart";
 import PemeringkatanBUMDesa from "../PemeringkatanBUMDesa";
 import BagiHasilPADes from "../BagiHasilPADes";
 import NIBandProgram from "../NIBandProgram";
+import MakanBergiziGratisChart from "../MakanBergiziGratisChart";
 import { ProvinceData } from "../../types";
 import { DashboardFilters } from "../../types";
 
@@ -50,6 +51,11 @@ export default function TabRingkasan({
       {/* ROW 3: NIB & KLUSTERISASI (Will render as 2 columns internally) */}
       <div className="w-full">
         <NIBandProgram data={activeData} tahun={filters.tahun} />
+      </div>
+
+      {/* ROW 3.5: MAKAN BERGIZI GRATIS */}
+      <div className="w-full">
+        <MakanBergiziGratisChart data={activeData} tahun={filters.tahun} />
       </div>
 
       {/* ROW 4: DATA TABLE */}

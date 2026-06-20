@@ -126,6 +126,10 @@ export interface RawVillageRow {
   aspekManfaatBersama: number; // Column AS
   nilaiPemeringkatanBumDesa: number; // Column Z
   nilaiPemeringkatanBumDesaBersama: number; // Column AT
+  mbgPendapatan2025: number; // Column AI
+  mbgPendapatan2026: number; // Column AJ
+  hasMbg2025: boolean;
+  hasMbg2026: boolean;
   klusterisasiDesaBisaEkspor?: string; // Column AW
   sektorKomoditas?: string; // Column AX
   komoditas?: string; // Column AY
@@ -342,6 +346,9 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
   const idxSektorKomoditas = headers.indexOf("SEKTOR KOMODITAS") !== -1 ? headers.indexOf("SEKTOR KOMODITAS") : 49; // Column AX
   const idxKomoditas = headers.indexOf("KOMODITAS") !== -1 ? headers.indexOf("KOMODITAS") : 50; // Column AY
 
+  const idxMbg2025 = 34; // Column AI
+  const idxMbg2026 = 35; // Column AJ
+
   // BUM DESA and BUM DESA BERSAMA list names
   const idxBumDesaName = headers.indexOf("BUM DESA") !== -1
     ? headers.indexOf("BUM DESA")
@@ -483,6 +490,10 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
       aspekManfaatBersama: idxAspekManfaatBersama !== -1 ? cleanScore(cells[idxAspekManfaatBersama]) : 0,
       nilaiPemeringkatanBumDesa: idxNilaiPemeringkatanBumDesa !== -1 ? cleanScore(cells[idxNilaiPemeringkatanBumDesa]) : 0,
       nilaiPemeringkatanBumDesaBersama: idxNilaiPemeringkatanBumDesaBersama !== -1 ? cleanScore(cells[idxNilaiPemeringkatanBumDesaBersama]) : 0,
+      mbgPendapatan2025: cells[idxMbg2025] ? cleanRupiah(cells[idxMbg2025]) : 0,
+      mbgPendapatan2026: cells[idxMbg2026] ? cleanRupiah(cells[idxMbg2026]) : 0,
+      hasMbg2025: Boolean(cells[idxMbg2025] && cells[idxMbg2025].trim() !== ""),
+      hasMbg2026: Boolean(cells[idxMbg2026] && cells[idxMbg2026].trim() !== ""),
       klusterisasiDesaBisaEkspor: idxKlusterisasi !== -1 ? (cells[idxKlusterisasi] || "").trim() : "",
       sektorKomoditas: idxSektorKomoditas !== -1 ? (cells[idxSektorKomoditas] || "").trim() : "",
       komoditas: idxKomoditas !== -1 ? (cells[idxKomoditas] || "").trim() : ""
@@ -704,6 +715,11 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
     const finalNIBCount = uniqueNibs.size;
     const finalNIBPercentage = finalTotalBum > 0 ? parseFloat(((finalNIBCount / finalTotalBum) * 100).toFixed(2)) : 0;
 
+    // Makan Bergizi Gratis (MBG)
+    const mbgPendapatan2025 = provRows.reduce((sum, r) => sum + r.mbgPendapatan2025, 0) / 1000000000; // in Billions
+    const mbgPendapatan2026 = provRows.reduce((sum, r) => sum + r.mbgPendapatan2026, 0) / 1000000000;
+    const uniqueMbgDesas = new Set(provRows.filter(r => r.hasMbg2025 || r.hasMbg2026).map(r => r.kodeDesa).filter(Boolean));
+
     return {
       id: pid,
       name: name,
@@ -785,6 +801,11 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
         desaBrilian: Math.round(totalBum * 0.08),
         mbg2025: Math.round(uniqueDesas.size * 0.12),
         mbg2026: Math.round(uniqueDesas.size * 0.18)
+      },
+      makanBergiziGratis: {
+        bumDesaCount: uniqueMbgDesas.size,
+        pendapatan2025: parseFloat(mbgPendapatan2025.toFixed(2)),
+        pendapatan2026: parseFloat(mbgPendapatan2026.toFixed(2))
       },
       bumDesaBersama: {
         count: totalBumDesaBersamaCount,
@@ -959,6 +980,11 @@ export async function fetchAndParseGoogleSheet(sheetUrl: string): Promise<Aggreg
       desaBrilian: Math.round(nationalBumDesaCount * 0.08),
       mbg2025: Math.round(uniqueNationalDesas * 0.12),
       mbg2026: Math.round(uniqueNationalDesas * 0.18)
+    },
+    makanBergiziGratis: {
+      bumDesaCount: new Set(rawRows.filter(r => r.hasMbg2025 || r.hasMbg2026).map(r => r.kodeDesa).filter(Boolean)).size,
+      pendapatan2025: parseFloat((rawRows.reduce((sum, r) => sum + r.mbgPendapatan2025, 0) / 1000000000).toFixed(2)),
+      pendapatan2026: parseFloat((rawRows.reduce((sum, r) => sum + r.mbgPendapatan2026, 0) / 1000000000).toFixed(2))
     },
     bumDesaBersama: {
       count: countBumDesaBersamaNat,
@@ -1161,6 +1187,10 @@ export function getFilteredSheetsData(
   const finalNIBCount = scopeNibs.size;
   const finalNIBPercentage = bumCount > 0 ? parseFloat(((finalNIBCount / bumCount) * 100).toFixed(2)) : 0;
 
+  const mbgPendapatan2025 = scopeRows.reduce((sum, r) => sum + r.mbgPendapatan2025, 0) / 1000000000; // in Billions
+  const mbgPendapatan2026 = scopeRows.reduce((sum, r) => sum + r.mbgPendapatan2026, 0) / 1000000000;
+  const uniqueMbgDesas = new Set(scopeRows.filter(r => r.hasMbg2025 || r.hasMbg2026).map(r => r.kodeDesa).filter(Boolean));
+
   return {
     ...activeData,
     kabupatenCount: uniqueKabs.size || 1,
@@ -1241,6 +1271,11 @@ export function getFilteredSheetsData(
       desaBrilian: Math.round(bumCount * 0.08),
       mbg2025: Math.round(uniqueDesas.size * 0.12),
       mbg2026: Math.round(uniqueDesas.size * 0.18)
+    },
+    makanBergiziGratis: {
+      bumDesaCount: uniqueMbgDesas.size,
+      pendapatan2025: parseFloat(mbgPendapatan2025.toFixed(2)),
+      pendapatan2026: parseFloat(mbgPendapatan2026.toFixed(2))
     },
     bumDesaBersama: {
       count: bumDesaBersamaCount,
